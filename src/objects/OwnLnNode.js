@@ -4,8 +4,16 @@ const HttpServer = require("./HttpServer");
 const logger = require('../utils/logger');
 
 class OwnLnNode extends LnNode {
-  constructor(rpc_listen_port, rest_listen_port, balance, iditity_pubkey, address) {
-    super(balance, iditity_pubkey, address)
+  constructor(
+      rpc_listen_port,
+      rest_listen_port,
+      balance, 
+      publicKey, 
+      privateKey, 
+      iditity_pubkey, 
+      address
+    ) {
+    super(balance, publicKey, privateKey, iditity_pubkey, address, peers, channels)
     this.rpc_listen_port = rpc_listen_port;
     this.rest_listen_port = rest_listen_port;
     this.rpcServer = new RpcServer(rpc_listen_port);
@@ -16,6 +24,13 @@ class OwnLnNode extends LnNode {
     
   }
 
+  addPeers() {
+    super.addPeer()
+  }
+
+  addChannel () {
+    super.addChannel()
+  }
 
 }
 

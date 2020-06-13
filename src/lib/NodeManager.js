@@ -5,20 +5,32 @@ const OwnLnNode = require('../objects/OwnLnNode');
 const NodeManager = (function() {
 
   return {
-    factory: function(info) {
-      return new LnNode(
+    factory: function(info,config,network) {
+      let node = new LnNode(
         info.name,
         info.balance,
-        info.iditity_pubkey
+        info.publicKey,
+        info.privateKey,
+        info.iditity_pubkey,
+        info.address,
+        info.peers,
+        info.channels
       );
+      if (!use_default) {
+        node.init(network)
+      }
+      return node;
     },
-    initOwnNode:function(cfg) {
+    initOwnNode:function(info) {
       return new OwnLnNode(
-        cfg.rpc_listen_port,
-        cfg.rest_listen_port,
-        cfg.balance,
-        cfg.iditity_pubkey,
-        cfg.address
+        info.name,
+        info.balance,
+        info.publicKey,
+        info.privateKey,
+        info.iditity_pubkey,
+        info.address,
+        info.peers,
+        info.channels
       );
     }
   }

@@ -1,0 +1,60 @@
+{
+  "blockchain_config": {
+    "network": "mainnet",
+    "auto_mine": true,
+    "mine_pace": 10
+  },
+  "own_node_config": {
+    "rpc_listen_port": 10001,
+    "rest_listen_port": 10011,
+    "balance": 100000000,
+    "publicKey": "nivfonavionfr",
+    "privateKey": "vnovnieavrpaerv",
+    "iditity_pubkey": "nvniebrivi343bqnib",
+    "address": "vmfoqenbriqorqbqib303bir",
+    "peers": [],
+    "channels": []
+  },
+  "nodes_config":[
+    {
+      "name": "Alice",
+      "balance": 100000000,
+      "publicKey": "nivfonavionfr",
+      "privateKey": "vnovnieavrpaerv",
+      "iditity_pubkey": "hovhioeavrorebvrequ",
+      "address": "vmfoqenbriqorqbqib303bir",
+      "peers": [],
+      "channels": []
+    },
+    {
+      "name": "Bob",
+      "balance": 100000000,
+      "publicKey": "nivfonavionfr",
+      "privateKey": "vnovnieavrpaerv",
+      "iditity_pubkey": "nvevbroqriqovroqbvirq",
+      "address": "vmfoqenbriqorqbqib303bir",
+      "peers": [],
+      "channels": []
+    },
+    {
+      "name": "Charolie",
+      "balance": 100000000,
+      "publicKey": "nivfonavionfr",
+      "privateKey": "vnovnieavrpaerv",
+      "iditity_pubkey": "i053hg3i3nvp33oooinpbrqnsdnep",
+      "address": "vmfoqenbriqorqbqib303bir",
+      "peers": [],
+      "channels": []
+    },
+    {
+      "name": "Daive",
+      "balance": 100000000,
+      "publicKey": "nivfonavionfr",
+      "privateKey": "vnovnieavrpaerv",
+      "iditity_pubkey": "niqri3i43p90-4-jrnpnr3nq",
+      "address": "vmfoqenbriqorqbqib303bir",
+      "peers": [],
+      "channels": []
+    }
+  ]
+}

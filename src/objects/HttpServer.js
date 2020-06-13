@@ -1,10 +1,12 @@
 const http = require("http");
+const router = require('router');
 const logger = require("../utils/logger")
 
 class HttpServer {
   constructor(listen_port) {
     this.listen_port = listen_port;
     this.server = http.createServer();
+    this.router = router();
   }
 
   async listen() {

@@ -10,8 +10,9 @@ const ServerManager = (function() {
         .catch(err => console.log(err));
 
       node.httpServer.listen()
-      .catch(err => console.log(err));
+        .catch(err => console.log(err));
 
+        
     },
     stop: (node) => {
       node.rpcServer.stop()

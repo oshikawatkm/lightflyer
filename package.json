@@ -1,21 +1,24 @@
 {
   "name": "lightflyer",
   "version": "1.0.0",
-  "description": "",
+  "description": "Local Enviroment for creating Lapps",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "Oshikawa Takumj",
+  "license": "MIT",
   "dependencies": {
     "@grpc/proto-loader": "^0.5.4",
+    "bip39": "^3.0.2",
+    "bitcoinjs-lib": "^5.1.10",
     "commander": "^5.1.0",
     "grpc": "^1.24.3",
     "log4js": "^6.3.0",
     "net": "^1.0.2",
-    "protoc": "^1.0.4"
+    "protoc": "^1.0.4",
+    "router": "^1.3.5"
   },
   "devDependencies": {
     "eslint": "^7.2.0",

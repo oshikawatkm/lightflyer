@@ -1,3 +1,4 @@
+const BlockchainManager = require('./src/lib/BlockchainManager');
 const NodeManager = require('./src/lib/NodeManager');
 const ServerManager = require('./src/lib/ServerManager');
 const logger = require('./src/utils/logger');
@@ -5,28 +6,31 @@ const fs = require('fs');
 
 
 
-const App = (function(nodeManager, serverManager){
-  const default_nodes_json_path = './cfg/default_nodes.json';
-  const setting_json_path = './cfg/setting.json'
+const App = (function(blockchainManager,nodeManager, serverManager){
+  const config_json_path = './cfg/config.json'
   const lnNodes = [];
-  let defaultNodesJson;
-  let settingJson;
+  let config;
 
   return {
     init: function() {
       logger.info("Initialze App...")
 
-      
+      // Read config
+      config = JSON.parse(fs.readFileSync(config_json_path));
+      console.log(config)
+      console.log(config["blockchain_config"])
+  
+      // Initialize Blockchain
+      blockchainManager.init(config["blockchain_config"])
 
       // Create Node by json
-      defaultNodesJson = JSON.parse(fs.readFileSync(default_nodes_json_path));
-      defaultNodesJson.forEach(obj => {
+      config["nodes_config"].forEach(obj => {
         lnNodes.push(nodeManager.factory(obj))
+          .then(node => blockchainManager.registerNode(node))
       })
 
       // Setup Own Node
-      settingJson = JSON.parse(fs.readFileSync(setting_json_path));
-      const OwnNode = nodeManager.initOwnNode(settingJson);
+      const OwnNode = nodeManager.initOwnNode(config["own_node_config"]);
 
       logger.info("Create Own Node");
       //ogger.info(OwnNode);
@@ -42,7 +46,7 @@ const App = (function(nodeManager, serverManager){
 
     }
   }
-})(NodeManager, ServerManager)
+})(BlockchainManager, NodeManager, ServerManager)
 
 
 App.init();
