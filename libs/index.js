@@ -1,7 +1,7 @@
-const BlockchainManager = require('./src/lib/BlockchainManager');
-const NodeManager = require('./src/lib/NodeManager');
-const ServerManager = require('./src/lib/ServerManager');
-const logger = require('./src/utils/logger');
+const BlockchainManager = require('./lib/BlockchainManager');
+const NodeManager = require('./lib/NodeManager');
+const ServerManager = require('./lib/ServerManager');
+const logger = require('./utils/logger');
 const fs = require('fs');
 
 

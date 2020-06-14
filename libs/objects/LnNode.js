@@ -1,4 +1,4 @@
-var bitcore = require('bitcore-lib');
+
 
 class LnNode {
   constructor(
