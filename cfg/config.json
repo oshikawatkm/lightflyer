@@ -1,10 +1,13 @@
 {
   "blockchain_config": {
+    "daemon": "btcd",
     "network": "mainnet",
     "auto_mine": true,
     "mine_pace": 10
   },
   "own_node_config": {
+    "daemon": "lnd",
+    "version": "1",
     "rpc_listen_port": 10001,
     "rest_listen_port": 10011,
     "balance": 100000000,
