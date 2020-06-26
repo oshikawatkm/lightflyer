@@ -12,7 +12,6 @@
     "last 4 versions"
   ],
   "scripts": {
-    "dev": "nodemon index.js",
     "prod": "cross-env NODE_ENV=production webpack --mode production --config webpack.build.config.js && electron --noDevServer .",
     "start": "cross-env NODE_ENV=development webpack-dev-server --hot --host 0.0.0.0 --config=./webpack.dev.config.js --mode development",
     "build": "cross-env NODE_ENV=production webpack --config webpack.build.config.js --mode production",
@@ -29,8 +28,10 @@
     "bitcoinjs-lib": "^5.1.10",
     "bootstrap": "^4.5.0",
     "commander": "^5.1.0",
+    "easeljs-react": "^0.2.0",
     "grpc": "^1.24.3",
     "log4js": "^6.3.0",
+    "mongodb": "^3.5.9",
     "net": "^1.0.2",
     "nodemon": "^2.0.4",
     "protoc": "^1.0.4",

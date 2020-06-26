@@ -15,13 +15,13 @@ class Setup extends Component {
           <div className="col-md-4">
             <div className="workspaces my-3">
               <div className="workspace">
-                <a href="#" className="text-warning">somelapps1</a>
+              <Link to="/dashboard" className="text-warning">somelapps1</Link>
               </div>
               <div className="workspace">
-                <a href="#" className="text-warning">somelapps2</a>
+              <Link to="/dashboard" className="text-warning">somelapps2</Link>
               </div>
               <div className="workspace">
-                <a href="#" className="text-warning">somelapps3</a>
+              <Link to="/dashboard" className="text-warning">somelapps3</Link>
               </div>
             </div>
           </div>

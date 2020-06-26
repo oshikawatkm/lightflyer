@@ -1,6 +1,7 @@
 const path = require('path')
 const url = require('url')
 const { app, BrowserWindow, ipcMain } = require('electron')
+const App = require('./lib/index.js')
 
 let mainWindow
 
@@ -15,8 +16,8 @@ if (
 
 function createMainWindow() {
 	mainWindow = new BrowserWindow({
-		width: 1000,
-		height: 700,
+		width: 1100,
+		height: 800,
 		show: false,
 		backgroundColor: '#000000',
 		icon: './assets/icons/icon.png',
@@ -65,8 +66,8 @@ function createMainWindow() {
 	mainWindow.on('closed', () => (mainWindow = null))
 }
 
-ipcMain.on("init", (e) => {
-	console.log(e)
+ipcMain.on("init", (e,config) => {
+	App.init(config);
 })
 
 app.on('ready', createMainWindow)
