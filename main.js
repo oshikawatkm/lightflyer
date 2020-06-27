@@ -67,6 +67,7 @@ function createMainWindow() {
 }
 
 ipcMain.on("init", (e,config) => {
+	console.log(config)
 	App.init(config);
 })
 

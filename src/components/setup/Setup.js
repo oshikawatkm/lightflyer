@@ -43,8 +43,8 @@ const Setup = () => {
   const onSubmit = e => {
     e.preventDefault();
 
-    //ipcRenderer.send("init", formData)
-    window.location.href = "dashboard"
+    ipcRenderer.send("init", formData)
+    //window.location.href = "dashboard"
   }
 
   // const displayChange = (e) => {
