@@ -1,7 +1,17 @@
 import React, { Component } from 'react';
 import { Link } from "react-router-dom";
+const electron = window.require('electron');
+const ipcRenderer = electron.ipcRenderer;
+
 
 class Setup extends Component {
+  componentDidMount() {
+    ipcRenderer.send('getWorkspaces', '')
+    ipcRenderer.on('getWorkspace-res', (e, workspaces) => {
+
+    })
+  }
+  
 	render() {
 		return (
       <div className="text-center text-warning mb-5">

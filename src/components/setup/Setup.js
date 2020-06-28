@@ -15,7 +15,7 @@ const Setup = () => {
     configFileDir: path.join(userHome, ".lightflyer"),
     miningPace: 10,
     fee: 1,
-    nodeNumber: 10,
+    nodeNumber: 5,
     satoshi: 10000000000000,
     rpcport: 10001,
     restport: 8001,

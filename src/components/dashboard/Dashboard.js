@@ -1,9 +1,25 @@
 import React, { Component } from 'react';
 import { Link } from "react-router-dom";
 import Footer from '../layout/Footer';
+const electron = window.require('electron');
+const ipcRenderer = electron.ipcRenderer;
+
+let config;
 
 class Dashboard extends Component {
+
+  componentDidMount() {
+    ipcRenderer.send('getWorkspace', 'test-ws')
+    ipcRenderer.send('start', 'test-ws')
+  }
+  
+
   render() {
+    ipcRenderer.on('getWorkspace-res', (e, workspace) => {
+      config = workspace[0]._doc;
+      console.log(config)
+    })
+
     return (
       <React.Fragment>
         <div className="row">
@@ -15,7 +31,15 @@ class Dashboard extends Component {
                 <div id="network" className="bg-secondary mb-3" style={{ width:410, height: 200}}>
                 </div>
                 <h5>Environment</h5>
-                <p>Blockchain: btcd</p>
+                <div className="row">
+                  <div className="col-md-6"><p>Blockchain: {config}</p></div>
+                  <div className="col-md-6"><p>Network: {config}</p></div>
+                </div>
+                <div className="row">
+                  <div className="col-md-6"><p>Blockchain: {config}</p></div>
+                  <div className="col-md-6"><p>Network: {config}</p></div>
+                </div>
+                <p>Blockchain: {config}</p>
                 <p>LN node: lnd</p>
                 <Link to="/supports" className="btn btn-block btn-warning mb-3">Create New Lapps</Link>
               </div>

@@ -2,6 +2,7 @@ const path = require('path')
 const url = require('url')
 const { app, BrowserWindow, ipcMain } = require('electron')
 const App = require('./lib/index.js')
+const WorkspaceCtr = require('./lib/controllers/workspace.js')
 
 let mainWindow
 
@@ -67,8 +68,22 @@ function createMainWindow() {
 }
 
 ipcMain.on("init", (e,config) => {
-	console.log(config)
 	App.init(config);
+})
+
+ipcMain.on("start", (e,config) => {
+	App.start(config);
+})
+
+ipcMain.on("getWorkspaces", (e) => {
+	let workspaces = WorkspaceCtr.getAll();
+	e.reply("getWorkspaces-res", workspaces)
+})
+
+
+ipcMain.on("getWorkspace", async (e, workspaceName) => {
+	let workspace = await  WorkspaceCtr.get(workspaceName);
+	e.reply("getWorkspace-res", workspace)
 })
 
 app.on('ready', createMainWindow)
