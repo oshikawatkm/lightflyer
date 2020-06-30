@@ -10,7 +10,7 @@ mongoose.connect(db.mongoURI)
 
 
 
-require('../lib/models/Workspace')
+require('../src/lib/models/Workspace')
 const Workspace = mongoose.model('workspaces');
 
 let keyPair = bitcoinjs.ECPair.makeRandom();
@@ -19,7 +19,7 @@ let publicKey = keyPair.publicKey.toString('hex');
 
 
 const newWorkspace = {
-  name: "test-ws",
+  name: "test-ws2",
   nodes: []
 }
 

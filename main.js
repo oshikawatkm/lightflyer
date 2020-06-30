@@ -1,8 +1,7 @@
 const path = require('path')
 const url = require('url')
-const { app, BrowserWindow, ipcMain } = require('electron')
-const App = require('./lib/index.js')
-const WorkspaceCtr = require('./lib/controllers/workspace.js')
+const { app, BrowserWindow } = require('electron')
+const setupIpc = require('./setupIpc')
 
 let mainWindow
 
@@ -24,6 +23,7 @@ function createMainWindow() {
 		icon: './assets/icons/icon.png',
 		webPreferences: {
 			nodeIntegration: true,
+			preload: `${__dirname}/preload.js`,
 		},
 	})
 
@@ -67,24 +67,8 @@ function createMainWindow() {
 	mainWindow.on('closed', () => (mainWindow = null))
 }
 
-ipcMain.on("init", (e,config) => {
-	App.init(config);
-})
-
-ipcMain.on("start", (e,config) => {
-	App.start(config);
-})
-
-ipcMain.on("getWorkspaces", (e) => {
-	let workspaces = WorkspaceCtr.getAll();
-	e.reply("getWorkspaces-res", workspaces)
-})
-
-
-ipcMain.on("getWorkspace", async (e, workspaceName) => {
-	let workspace = await  WorkspaceCtr.get(workspaceName);
-	e.reply("getWorkspace-res", workspace)
-})
+// Import & Setup IPC Mains
+setupIpc()
 
 app.on('ready', createMainWindow)
 

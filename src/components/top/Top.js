@@ -1,45 +1,31 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { Link } from "react-router-dom";
-const electron = window.require('electron');
-const ipcRenderer = electron.ipcRenderer;
+import useGetWorkspaces from '../../hooks/getWorkspaces'
 
 
-class Setup extends Component {
-  componentDidMount() {
-    ipcRenderer.send('getWorkspaces', '')
-    ipcRenderer.on('getWorkspace-res', (e, workspaces) => {
+const Setup = () => {
+  const [workspaces] = useGetWorkspaces()
 
-    })
-  }
-  
-	render() {
-		return (
-      <div className="text-center text-warning mb-5">
-        <h1 className="display-3" style={{ marginTop: 80 }}>Light Flyer</h1>
-        <p>v 1.0.0</p>
-        <Link to="/setup" className="btn btn-outline-warning mt-3">Create New Workspace</Link>
-        <p className="mt-4">OR</p>
-        <h3>Use Workspace</h3>
-        <div className="row">
-          <div className="col-md-4"></div>
-          <div className="col-md-4">
-            <div className="workspaces my-3">
-              <div className="workspace">
-              <Link to="/dashboard" className="text-warning">somelapps1</Link>
-              </div>
-              <div className="workspace">
-              <Link to="/dashboard" className="text-warning">somelapps2</Link>
-              </div>
-              <div className="workspace">
-              <Link to="/dashboard" className="text-warning">somelapps3</Link>
-              </div>
-            </div>
+  return (
+    <div className="text-center text-warning mb-5">
+      <h1 className="display-3" style={{ marginTop: 80 }}>Light Flyer</h1>
+      <p>v 0.1.0</p>
+      <Link to="/setup" className="btn btn-outline-warning mt-3">Create New Workspace</Link>
+      <p className="mt-4">OR</p>
+      <h3>Use Workspace</h3>
+      <div className="row">
+        <div className="col-md-4"></div>
+        <div className="col-md-4">
+          <div className="workspaces my-3">
+            {workspaces.map(ws => (<div className="workspace">
+            <Link to="/dashboard" className="text-warning">{ws}</Link>
+            </div>))}
           </div>
-          <div className="col-md-4"></div>
         </div>
+        <div className="col-md-4"></div>
       </div>
-    )
-	}
+    </div>
+  )
 }
 
 

@@ -4,7 +4,7 @@ const WorkspaceCtr = require('./controllers/workspace');
 const ServerCtr = require('./controllers/server');
 const logger = require('./utils/logger');
 const mongoose = require('mongoose');
-const db = require('../cfg/db')
+const db = require('../../cfg/db')
 const Workspace = require('./models/Workspace');
 
 
@@ -33,12 +33,13 @@ const App = ((blockchainManager, LNnodeCtr, ServerCtr, WorkspaceCtr) => {
       mongoose.Promise = global.Promise;
       mongoose.connect(db.mongoURI)
         .then(() => logger.info('MongoDB Connected...'))
-        .catch(err => logger.error(err))
+        .catch(err => {
+          logger.error(err)
+        })
 
       // set wprkspace
       workspace = workspaceName;
       await ServerCtr.init(workspace)
-      console.log("ok")
       ServerCtr.listen()
 
   

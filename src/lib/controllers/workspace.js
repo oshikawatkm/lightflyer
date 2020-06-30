@@ -5,7 +5,7 @@ const Workspace = mongoose.model('workspaces');
 
 
 
-const db = require('../../cfg/db')
+const db = require('../../../cfg/db')
 
 const WorkspaceController = (() => {
   return {
@@ -25,8 +25,17 @@ const WorkspaceController = (() => {
       .then(() => logger.info("Success Saving Workspace Config!"))
       .catch(err => logger.error(err))
     },
-    getAll: () => {
-      let workspaces = Workspace.find();
+    getAll: async () => {
+      mongoose.Promise = global.Promise;
+      mongoose.connect(db.mongoURI)
+        .then(() => logger.info('MongoDB Connected...'))
+        .catch(err => logger.error(err))
+
+      let workspaces = await Workspace.find()
+        .then(res => {
+          return res
+        });
+
       return workspaces;
     },
     get: async (workspaceName) => {
