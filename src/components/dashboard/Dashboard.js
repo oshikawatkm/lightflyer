@@ -1,10 +1,19 @@
 import React from 'react';
 import { Link } from "react-router-dom";
 import Footer from '../layout/Footer';
-import useGetWorkspace from '../../hooks/getWorkspace'
+import useGetWorkspace from '../../hooks/getWorkspace';
+import startApp from '../../hooks/startApp';
 
 const Dashboard = () => {
-  const [workspaceName, rpcPort, restPort] = useGetWorkspace()
+  const [
+    workspaceName, 
+    rpcPort, 
+    restPort, 
+    blockchainDaemon, 
+    bitcoinNetwork, 
+    lnDaemon
+  ] = useGetWorkspace()
+  startApp()
   return (
     <React.Fragment>
       <div className="row">
@@ -14,7 +23,7 @@ const Dashboard = () => {
               <Link to="/" className="btn btn-outline-warning mt-3" ><i className="fas fa-backspace"></i> Top</Link>
             </div>
             <div className="col-md-9">
-              <h3 class="text-warning">{workspaceName}</h3>
+              <h3 class="text-warning mt-3">{workspaceName}</h3>
             </div>
           </div>
           <div className="card my-3">
@@ -24,11 +33,11 @@ const Dashboard = () => {
               </div>
               <h5>Environment</h5>
               <div className="row">
-  <div className="col-md-6"><p>Blockchain: </p></div>
-  <div className="col-md-6"><p>Network: {rpcPort}</p></div>
+  <div className="col-md-6"><p>BTCDaemon: {blockchainDaemon}</p></div>
+  <div className="col-md-6"><p>Network: {bitcoinNetwork}</p></div>
               </div>
               <div className="row">
-                <div className="col-md-6"><p>Blockchain: </p></div>
+  <div className="col-md-6"><p>LNDaemon: {lnDaemon}</p></div>
                 <div className="col-md-6"><p>Network: </p></div>
               </div>
               <div className="row">

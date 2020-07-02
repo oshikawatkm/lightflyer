@@ -14,7 +14,7 @@ const {
 
 module.exports = function setupIpc() {
   ipcMain.on(initApp, (event,config) => {
-    App.init(config);
+    WorkspaceCtr.init(config);
   })
   
   ipcMain.on(startApp, (event,config) => {
@@ -28,7 +28,6 @@ module.exports = function setupIpc() {
   
   ipcMain.on(getWorkspaces, async (event) => {
     let workspaces = await WorkspaceCtr.getAll();
-    console.log(workspaces)
     event.reply(getWorkspacesResponse, workspaces)
   })
 }

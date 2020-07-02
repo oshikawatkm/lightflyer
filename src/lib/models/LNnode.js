@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+const PeersSchema = require('./Peer');
 const ChannelsSchema = require('./Channel');
 const InvoicesSchema = require('./Invoice');
 
@@ -30,7 +31,8 @@ const LNnodeSchema = new Schema({
     required: true
   },
   peers: {
-    type: [String],
+    type: Schema.Types.ObjectId,
+    ref: 'PeersSchema',
     default: []
   },
   channels: {

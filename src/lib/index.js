@@ -6,12 +6,11 @@ const logger = require('./utils/logger');
 const mongoose = require('mongoose');
 const db = require('../../cfg/db')
 const Workspace = require('./models/Workspace');
+const RestServer = require('./restServer/server.js');
+const GrpcServer = require('./grpcServer/server.js');
 
-
-const App = ((blockchainManager, LNnodeCtr, ServerCtr, WorkspaceCtr) => {
-  const config_json_path = '../cfg/config.json'
-  const lnNodes = [];
-  let worksapce;
+const App = (() => {
+  let thisWorkspace;
   let config;
   
 
@@ -19,6 +18,7 @@ const App = ((blockchainManager, LNnodeCtr, ServerCtr, WorkspaceCtr) => {
     init: (config) => {
       logger.info("Initialze App...")
 
+      // connect MongoDB
       mongoose.Promise = global.Promise;
       mongoose.connect(db.mongoURI)
         .then(() => logger.info('MongoDB Connected...'))
@@ -30,47 +30,35 @@ const App = ((blockchainManager, LNnodeCtr, ServerCtr, WorkspaceCtr) => {
     start: async (workspaceName) => {
       logger.info("Start App...")
 
+      // connect MongoDB [TASK]: Remove this!
       mongoose.Promise = global.Promise;
       mongoose.connect(db.mongoURI)
         .then(() => logger.info('MongoDB Connected...'))
-        .catch(err => {
-          logger.error(err)
-        })
+        .catch(err => logger.error(err))
+      
+      // Set Workspace
+      thisWorkspace = workspaceName;
 
-      // set wprkspace
-      workspace = workspaceName;
-      await ServerCtr.init(workspace)
-      ServerCtr.listen()
+      // Read config
+      let workspaceConfig = await WorkspaceCtr.get(thisWorkspace)
 
-  
-      // // Initialize Blockchain
-      // blockchainManager.init(config["blockchain_config"])
+      // // Start REST Server
+      let restServer = new RestServer(workspaceConfig.server_config.rest_listen_port)
+      restServer.listen()
 
-      // // Create Node by json
-      // config["nodes_config"].forEach(obj => {
-      //   lnNodes.push(
-      //     nodeManager.factory(obj)
-      //      //.then(node => blockchainManager.registerNode(node))
-      //   )
-      // })
+      // // Start gRPC Server
+      // let grpcServer = new GrpcServer(workspaceConfig.server_config.rpc_listen_port)
+      // grpcServer.listen()
 
-      // // Setup Own Node
-      // const OwnNode = nodeManager.initOwnNode(config["own_node_config"]);
-
-      // logger.info("Create Own Node");
-      // //logger.info(OwnNode);
-
-      // 
-      // serverManager.init(config["own_node_config"])
-      // serverManager.start()
     },
     stop: () => {
-
+      WorkspaceCtr.save();
     },
     saveWarkSpace: function() {
 
     }
   }
-})(BlockchainManager, LNnodeCtr, ServerCtr, WorkspaceCtr)
+})()
 
 module.exports = App;
+App.start()
