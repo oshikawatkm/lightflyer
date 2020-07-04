@@ -2,9 +2,12 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const PeersSchema = require('./Peer');
 const ChannelsSchema = require('./Channel');
-const InvoicesSchema = require('./Invoice');
 
 const LNnodeSchema = new Schema({
+  workspace: {
+    type: Schema.Types.ObjectId,
+    ref: 'workspaces'
+  },
   name: {
     type: String,
     required: true
@@ -28,23 +31,16 @@ const LNnodeSchema = new Schema({
   },
   address: {
     type: String,
-    required: true
+    default: "192.168.0.0",
   },
   peers: {
     type: Schema.Types.ObjectId,
     ref: 'PeersSchema',
-    default: []
   },
   channels: {
     type: Schema.Types.ObjectId,
     ref: 'ChannelsSchema',
-    default: []
-  },
-  invoices: {
-    type: Schema.Types.ObjectId,
-    ref: 'InvoicesSchema',
-    default: []
-  },
+  }
 })
 
 mongoose.model('lnnodes', LNnodeSchema);

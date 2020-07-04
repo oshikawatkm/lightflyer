@@ -8,7 +8,7 @@ const WorkspaceController = (() => {
       
     },
     new: async (config, nodes) => {
-      await WorkspaceServices.create(config, nodes);
+      return await WorkspaceServices.create(config, nodes);
     },
     getAll: async () => {
       await WorkspaceServices.find(config, nodes);

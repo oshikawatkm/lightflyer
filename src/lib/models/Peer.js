@@ -2,6 +2,10 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const PeersSchema = new Schema({
+  lnnode: {
+    type: Schema.Types.ObjectId,
+    ref: 'lnnodes'
+  },
   pub_key: {
     type: String,
     required: true,
@@ -11,24 +15,24 @@ const PeersSchema = new Schema({
     required: true,
   },
   bytes_sent: {
-    type: String,
+    type: Number,
     required: true,
-    default: "7",
+    default: 7,
   },
   bytes_recv: {
-    type: String,
+    type: Number,
     required: true,
-    default: "7",
+    default: 7,
   },
   sat_sent: {
-    type: String,
+    type: Number,
     required: true,
-    default: "0",
+    default: 0,
   },
   sat_recv: {
-    type: String,
+    type: Number,
     required: true,
-    default: "0",
+    default: 0,
   },
   inbound: {
     type: Boolean,
@@ -36,9 +40,9 @@ const PeersSchema = new Schema({
     default: false,
   },
   ping_time: {
-    type: String,
+    type: Number,
     required: true,
-    default: "0",
+    default: 0,
   }
 })
 

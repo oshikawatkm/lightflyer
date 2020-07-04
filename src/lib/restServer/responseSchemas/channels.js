@@ -1,10 +1,10 @@
 
 
 function getChannels(channels) {
-  let channels = [];
+  let channelRes = [];
 
   channels.forEach(channel => {
-    var obj = new Object();
+    let obj = new Object();
     obj.active         = channel.active;
     obj.remote_pubkey  = channel.remote_pubkey;
     obj.channel_point  = channel.remote_pubkey;
@@ -34,10 +34,10 @@ function getChannels(channels) {
     obj.push_amount_sat = channel.push_amount_sat;
     obj.thaw_height    = channel.thaw_height;
 
-    channels.push(obj)
+    channelRes.push(obj)
   })
 
-  return channels;
+  return channelRes;
 }
 
 

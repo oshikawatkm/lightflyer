@@ -45,6 +45,10 @@ const HtlcSchema = new Schema({
 })
 
 const InvoiceSchema = new Schema({
+  channel: {
+    type: Schema.Types.ObjectId,
+    ref: 'channels'
+  },
   memo: {
     type: String,
     required: true,

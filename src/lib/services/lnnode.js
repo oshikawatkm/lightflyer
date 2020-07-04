@@ -1,9 +1,11 @@
 const logger = require('../utils/logger');
+const bitcoinjs = require('bitcoinjs-lib');
 const mongoose = require('mongoose');
 require ('../models/Workspace');
 const Workspace = mongoose.model('workspaces');
+const LNnode = mongoose.model('lnnodes');
 
-const LNnodeController = (() => {
+const LNnodeServices = (() => {
   let defaultNodeNames = ["You", "Alice", "Bob", "Charlie", "Dave"]
   let YourIPubkey;
 
@@ -23,36 +25,27 @@ const LNnodeController = (() => {
   }
 
   return {
-    createNodes: (config) => {
-      let nodes = []
-      for (i = 0; i <= config.nodeNumber - 1 ;i++) {
-        let node = new LNnode({
-          name: defaultNodeNames[i],
-          balanace: config.satoshi,
-          publicKey: config.publicKey,
-          privateKey: config.privateKey,
-          iditity_pubkey: config.iditity_pubkey,
-          address: config.address,
-          peers: config.peers,
-          channels: config.channels
-        });
-        
-        nodes.push(node)
-      }
-      return nodes;
-    },
-    create: (config) => {
-      let node = new LNnode({
+    create: async (wsId, config) => {
+      let keyPair = bitcoinjs.ECPair.makeRandom();
+      let privateKey = keyPair.toWIF();
+      let publicKey = keyPair.publicKey.toString('hex');
+      new LNnode({
+        workspace: wsId,
         name: defaultNodeNames[i],
         balanace: config.satoshi,
-        publicKey: config.publicKey,
-        privateKey: config.privateKey,
-        iditity_pubkey: config.iditity_pubkey,
+        publicKey: publicKey,
+        privateKey: privateKey,
+        iditity_pubkey: publicKey,
         address: config.address,
-        peers: config.peers,
-        channels: config.channels
-      });
-      return nodes;
+      })
+      .save()
+      .catch(err => logger.error(err))
+
+    },
+    findOne: async (oid, name) => {
+      let ln = await LNnode.findOne({workspace: oid, name: name})
+      .then(res => {return res})
+      return ln;
     },
     addPeer:(senderAddr, reciverAdder) => {
 
@@ -83,58 +76,7 @@ const LNnodeController = (() => {
       funding_shim
       ) => {
 
-      // Channelを開設
-      // 開設申請者
-      new Channel({
-        active: true,
-        remote_pubkey: node_pubkey_string,
-        channel_point: "hoge",
-        chan_id: Math.random() * 10000000000000000,
-        capacity: push_sat,
-        local_balance: local_funding_amount,
-        remote_balance: push_sat,
-        commit_fee: 9050,
-        commit_weight: 600,
-        fee_per_kw: 12500,
-        unsettled_balance: 0,
-        total_satoshis_sent: 0,
-        total_satoshis_received: 0,
-        num_updates: 0,
-        pending_htlcs: [],
-        csv_delay: 144,
-        private: private
-      })
-      .save()
-      .then(() => {
-        // 開設時のlocal_amt分nodeからbalanceをマイナス
-
-      })
-
-      // 開設受信者
-      new Channel({
-        active: true,
-        remote_pubkey: YourIPubkey,
-        channel_point: "hoge",
-        chan_id: Math.random() * 10000000000000000,
-        capacity: push_sat,
-        local_balance: local_funding_amount,
-        remote_balance: push_sat,
-        commit_fee: 9050,
-        commit_weight: 600,
-        fee_per_kw: 12500,
-        unsettled_balance: 0,
-        total_satoshis_sent: 0,
-        total_satoshis_received: 0,
-        num_updates: 0,
-        pending_htlcs: [],
-        csv_delay: 144,
-        private: private
-      })
-      .save()
-      .then(() => {
-        // 開設時のlocal_amt分nodeからbalanceをマイナス
-      })
-
+    
     },
     addInvoice:() => {
       if (!isChannel()) {
@@ -172,4 +114,4 @@ const LNnodeController = (() => {
   }
 })()
 
-module.exports = LNnodeController;
+module.exports = LNnodeServices;

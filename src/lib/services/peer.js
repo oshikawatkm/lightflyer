@@ -4,7 +4,7 @@ require ('../models/Peer');
 const Peer = mongoose.model('peers');
 const db = require('../../../cfg/db');
 
-const PeerService = (() => {
+const PeerServices = (() => {
   return {
     create: (senderPubkey, senderAddr, receiverPubkey, receiverAddr, options) => {
 
@@ -45,4 +45,4 @@ const PeerService = (() => {
   }
 })()
 
-module.exports = PeerService;
+module.exports = PeerServices;

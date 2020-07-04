@@ -1,6 +1,7 @@
 const BlockchainManager = require('./controllers/BlockchainManager');
 const LNnodeCtr = require('./controllers/lnnode');
 const WorkspaceCtr = require('./controllers/workspace');
+const PeerCtr = require('./controllers/lnnode');
 const ServerCtr = require('./controllers/server');
 const logger = require('./utils/logger');
 const mongoose = require('mongoose');
@@ -10,46 +11,56 @@ const RestServer = require('./restServer/server.js');
 const GrpcServer = require('./grpcServer/server.js');
 
 const App = (() => {
-  let thisWorkspace;
+  let thisWSname;
   let config;
-  
 
   return {
-    init: (config) => {
-      logger.info("Initialze App...")
+    init:async () => {
+      logger.info("Initialzing App...")
+      try{
+        // connect MongoDB
+        mongoose.Promise = global.Promise;
+        await mongoose.connect(db.mongoURI, {useUnifiedTopology: true, useNewUrlParser: true})
+          .then(() => logger.info('MongoDB Connected...'))
+          .catch(err => logger.error(err))
+      }catch(err){
+        logger.error("Failed Initialzing App!!")
+      }
+    },
+    new:async (config) => {
+      try{
+        logger.info("Createing New Workspace...")
 
-      // connect MongoDB
-      mongoose.Promise = global.Promise;
-      mongoose.connect(db.mongoURI)
-        .then(() => logger.info('MongoDB Connected...'))
-        .catch(err => logger.error(err))
-
-      let nodesArr = LNnodeCtr.factory(config);
-      WorkspaceCtr.init(config, nodesArr);
+        let wsId = await WorkspaceCtr.new(config);
+        await LNnodeCtr.factory(wsId, config);
+      }catch(err){
+        logger.error("Failed Createing New Workspace!!")
+      }
     },
     start: async (workspaceName) => {
-      logger.info("Start App...")
+      try{
+        logger.info("Start App...")
 
-      // connect MongoDB [TASK]: Remove this!
-      mongoose.Promise = global.Promise;
-      mongoose.connect(db.mongoURI)
-        .then(() => logger.info('MongoDB Connected...'))
-        .catch(err => logger.error(err))
-      
-      // Set Workspace
-      thisWorkspace = workspaceName;
+        // Set Workspace
+        thisWSname = workspaceName;
 
-      // Read config
-      let workspaceConfig = await WorkspaceCtr.get(thisWorkspace)
+        await LNnodeCtr.init(thisWSname)
+        await PeerCtr.init(thisWSname)
 
-      // // Start REST Server
-      let restServer = new RestServer(workspaceConfig.server_config.rest_listen_port)
-      restServer.listen()
+        // Read config
+        let workspaceConfig = await WorkspaceCtr.get(thisWSname)
 
-      // // Start gRPC Server
-      // let grpcServer = new GrpcServer(workspaceConfig.server_config.rpc_listen_port)
-      // grpcServer.listen()
+        // // Start REST Server
+        let restServer = new RestServer(workspaceConfig.server_config.rest_listen_port)
+        restServer.listen()
 
+        // // Start gRPC Server
+        // let grpcServer = new GrpcServer(workspaceConfig.server_config.rpc_listen_port)
+        // grpcServer.listen()
+      }catch(err){
+        logger.error(err)
+        logger.error("Failed Starting App!!")
+      }
     },
     stop: () => {
       WorkspaceCtr.save();

@@ -7,10 +7,10 @@ const Workspace = mongoose.model('workspaces');
 
 const db = require('../../../cfg/db')
 
-const WorkspaceService = (() => {
+const WorkspaceServices = (() => {
   return {
-    create: (config, nodes) => {
-      new Workspace({
+    create:async (config, nodes) => {
+      let wsId = await new Workspace({
         name: config.workspaceName,
         server_config: {
           rpc_listen_port: config.rpcport,
@@ -19,18 +19,16 @@ const WorkspaceService = (() => {
         blockchain_config: {
           minepace: config.minepace,
         },
-        nodes: nodes
       })
       .save()
-      .then(() => logger.info("Success Saving Workspace Config!"))
+      .then(ws => {
+        logger.info("Success Saving Workspace Config!");
+        return ws._id;
+      })
       .catch(err => logger.error(err))
+      return wsId;
     },
     find: async () => {
-      mongoose.Promise = global.Promise;
-      mongoose.connect(db.mongoURI)
-        .then(() => logger.info('MongoDB Connected...'))
-        .catch(err => logger.error(err))
-
       let workspaces = await Workspace.find()
         .then(res => {
           return res
@@ -38,12 +36,11 @@ const WorkspaceService = (() => {
 
       return workspaces;
     },
-    findOne: async (workspaceName) => {
-      let ws = await Workspace.findOne({name: workspaceName})
+    findOne: async (wsname) => {
+      let ws = await Workspace.findOne({name: wsname})
         .then(res => {
           return res
         })
-      console.log(ws)
       return ws
     },
     update: () => {
@@ -51,8 +48,15 @@ const WorkspaceService = (() => {
     },
     delete: () => {
       
-    }
+    },
+    findId: async (wsname) => {
+      let wsId = await Workspace.findOne({name: wsname}, {$set: "_id"})
+        .then((res) => {
+          return res;
+        })
+      return wsId;
+    },
   }
 })()
 
-module.exports = WorkspaceService;
+module.exports = WorkspaceServices;

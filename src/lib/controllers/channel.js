@@ -4,9 +4,10 @@ const PeerServices = require('../services/peer');
 const ChannelServices = require('../services/channel');
 
 const ChannelController = (() => {
+  let nodeIdList = {};
   return {
     init: (config, nodes) => {
-     
+      
     },
     new: async () => {
       if(await !PeerServices.isPeer()) {
@@ -20,7 +21,10 @@ const ChannelController = (() => {
     get: async (workspaceName) => {
 
     },
-    destroy: () => {
+    confirmed: async () => {
+
+    },
+    close: async () => {
       
     }
   }
