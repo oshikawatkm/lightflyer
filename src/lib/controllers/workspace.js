@@ -4,8 +4,8 @@ const WorkspaceServices = require('../services/workspace');
 
 const WorkspaceController = (() => {
   return {
-    init: (config, nodes) => {
-      
+    init: (wsname) => {
+      return WorkspaceServices.findId(wsname)
     },
     new: async (config, nodes) => {
       return await WorkspaceServices.create(config, nodes);

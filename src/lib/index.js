@@ -1,7 +1,7 @@
 const BlockchainManager = require('./controllers/BlockchainManager');
 const LNnodeCtr = require('./controllers/lnnode');
 const WorkspaceCtr = require('./controllers/workspace');
-const PeerCtr = require('./controllers/lnnode');
+const PeerCtr = require('./controllers/peer');
 const ServerCtr = require('./controllers/server');
 const logger = require('./utils/logger');
 const mongoose = require('mongoose');
@@ -12,7 +12,7 @@ const GrpcServer = require('./grpcServer/server.js');
 
 const App = (() => {
   let thisWSname;
-  let config;
+  let wsId;
 
   return {
     init:async () => {
@@ -43,9 +43,10 @@ const App = (() => {
 
         // Set Workspace
         thisWSname = workspaceName;
+        wsId = await WorkspaceCtr.init(thisWSname)
 
-        await LNnodeCtr.init(thisWSname)
-        await PeerCtr.init(thisWSname)
+        await LNnodeCtr.init(wsId)
+        await PeerCtr.init(wsId)
 
         // Read config
         let workspaceConfig = await WorkspaceCtr.get(thisWSname)

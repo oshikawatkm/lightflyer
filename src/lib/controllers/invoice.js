@@ -42,7 +42,7 @@ const ChannelController = (() => {
       }
       ChannelServices.create();
     },
-    addChannelToSelf:async (senderIPubkey, options) => {
+    addInvoiceToSelf:async (senderIPubkey, options) => {
       let oids = _getTargetOIds();
       if(await !PeerServices.isPeer(wsname, selfIPubkey)) {
         return
@@ -63,7 +63,7 @@ const ChannelController = (() => {
 
       return;
     },
-    addChannelFromSelf:async (options) => {
+    addInvoiceFromSelf:async (options) => {
       // Generate Channel ID
       let chan_id = Math.random() * 10000000000000000;
       let channelReceiverOption = {
@@ -94,7 +94,7 @@ const ChannelController = (() => {
       }
       return;
     },
-    addChannelByOthers:async (senderIPubkey,options) => {
+    addCInvoiceByOthers:async (senderIPubkey,options) => {
       if(await !PeerServices.isPeer(wsname, selfIPubkey)) {
         return
       }

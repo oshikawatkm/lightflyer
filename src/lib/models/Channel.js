@@ -87,7 +87,6 @@ const ChannelSchema = new Schema({
   invoices: {
     type: Schema.Types.ObjectId,
     ref: 'InvoicesSchema',
-    default: []
   },
 })
 

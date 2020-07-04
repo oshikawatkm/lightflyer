@@ -38,13 +38,18 @@ const LNnodeServices = (() => {
         iditity_pubkey: publicKey,
         address: config.address,
       })
-      .save()
-      .catch(err => logger.error(err))
+        .save()
+        .catch(err => logger.error(err))
 
+    },
+    find:async (oid) => {
+      let lns = await LNnode.find({workspace: oid})
+        .then(res => {return res})
+      return lns;
     },
     findOne: async (oid, name) => {
       let ln = await LNnode.findOne({workspace: oid, name: name})
-      .then(res => {return res})
+        .then(res => {return res})
       return ln;
     },
     addPeer:(senderAddr, reciverAdder) => {

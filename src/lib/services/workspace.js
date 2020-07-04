@@ -4,7 +4,6 @@ require ('../models/Workspace');
 const Workspace = mongoose.model('workspaces');
 
 
-
 const db = require('../../../cfg/db')
 
 const WorkspaceServices = (() => {
@@ -54,7 +53,7 @@ const WorkspaceServices = (() => {
         .then((res) => {
           return res;
         })
-      return wsId;
+      return wsId._id;
     },
   }
 })()
