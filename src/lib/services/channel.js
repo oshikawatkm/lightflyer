@@ -15,9 +15,9 @@ const ChannelServices = (() => {
         remote_pubkey: options.node_pubkey,
         channel_point: "hoge",
         chan_id: chan_id,
-        capacity: options.push_sat,
-        local_balance: options.push_sat,
-        remote_balance: options.local_funding_amount,
+        capacity: parseInt(options.push_sat, 10),
+        local_balance: parseInt(options.push_sat, 10),
+        remote_balance: parseInt(options.local_funding_amount, 10),
         commit_fee: 9050,
         commit_weight: 600,
         fee_per_kw: 12500,
@@ -48,7 +48,10 @@ const ChannelServices = (() => {
     },
     findOne: async (oid) => {
       let channel = await Channel
-        .findOne({"_id": ObjectId(oid)})
+        .findOne({
+          "_id": ObjectId(oid),
+          active: true
+        })
         .then(channel => {
 
           return channel;
@@ -58,13 +61,35 @@ const ChannelServices = (() => {
     destroy: () => {
       
     },
+    close:async (oid) => {
+      try {
+        await Channel
+          .findOneAndUpdate({
+            "_id": ObjectId(oid),
+            balance: lnnode.balance - invoice.value,
+          })
+      } catch(err) {
+        return new Error("Hoge")
+      }
+    },
+    findChannelId: async(oid, ipubkey) => {
+      let channel = await Channel.findOne({
+        lnnode: oid, 
+        pub_key: ipubkey,
+        active: true
+      })
+        .then(res => {
+          return res;
+        })
+      return channel._id;
+    },
     isChannel:async (senderOId, receiverOId, receiverPubkey, senderPubkey) => {
       await Channel.findOne({ 
         lnnode: senderOId, 
         pub_key: receiverPubkey
       })
         .then(node => {
-          if (!node) {
+          if (!node || node.active === false) {
             return false;
           }
         })
@@ -74,13 +99,13 @@ const ChannelServices = (() => {
           pub_key: senderPubkey
         })
         .then(node => {
-          if (!node) {
+          if (!node || node.active === false) {
             return false;
           }
         })
       
       return true;
-    }
+    },
   }
 })()
 

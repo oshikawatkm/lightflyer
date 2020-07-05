@@ -1,6 +1,6 @@
 const Blockchain = require("../objects/Blockchain");
 
-const blockchainManager = (() => {
+const blockchainController = (() => {
   let blockchain;
   return {
     init: (config) => {
@@ -17,4 +17,4 @@ const blockchainManager = (() => {
 })()
 
 
-module.exports = blockchainManager;
+module.exports = blockchainController;

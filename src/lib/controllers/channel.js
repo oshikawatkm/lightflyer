@@ -115,7 +115,7 @@ const ChannelController = (() => {
       return;
     },
     getAll: async () => {
-      return await ChannelServices.find();
+      return await ChannelServices.find(oid);
     },
     get: async (workspaceName) => {
 
@@ -124,7 +124,7 @@ const ChannelController = (() => {
 
     },
     close: async () => {
-      
+      await ChannelServices.close(wsname, selfIPubkey, chan_id, channelReceiverOption);
     }
   }
 })()

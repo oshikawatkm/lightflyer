@@ -13,9 +13,9 @@ const PeerController = (() => {
     return ipubkey;
   }
 
-  function _getTargetOIds (senderIPubkey, senderIPubkey) {
+  function _getTargetOIds (senderIPubkey, receiverIPubkey) {
     let sender = nodeIdList.filter(obj => obj.ipubkey === senderIPubkey);
-    let receiver = nodeIdList.filter(obj => obj.ipubkey === senderIPubkey);
+    let receiver = nodeIdList.filter(obj => obj.ipubkey === receiverIPubkey);
 
     return {
       senderId:   sender.oid,

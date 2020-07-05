@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-const InvoicesSchema = require('./Invoice');
 
 const ChannelSchema = new Schema({
   lnnode: {
@@ -83,10 +82,6 @@ const ChannelSchema = new Schema({
     type: Boolean,
     required: true,
     default: false
-  },
-  invoices: {
-    type: Schema.Types.ObjectId,
-    ref: 'InvoicesSchema',
   },
 })
 

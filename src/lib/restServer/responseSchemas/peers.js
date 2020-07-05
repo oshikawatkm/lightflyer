@@ -15,8 +15,25 @@ function getPeers(peers) {
     peersRes.push(obj)
   })
 
-  return chanpeersResnels;
+  return peersRes;
 }
+
+function addPeer(peer) {
+  let peerRes = new Object();
+  peerRes.pub_key       = peer.pub_key;
+  peerRes.address  = peer.address;
+  peerRes.bytes_sent  = peer.bytes_sent;
+  peerRes.sat_sent        = peer.sat_sent;
+  peerRes.sat_recv       = peer.sat_recv;
+  peerRes.inbound  = peer.inbound;
+  peerRes.ping_time = peer.ping_time;
+
+  return peerRes;
+}
+
+exports.addPeer = addPeer;
+exports.getPeers = getPeers;
+
 
 
 

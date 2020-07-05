@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const PeersSchema = require('./Peer');
 const ChannelsSchema = require('./Channel');
+const InvoicesSchema = require('./Invoice');
 
 const LNnodeSchema = new Schema({
   workspace: {
@@ -40,7 +41,11 @@ const LNnodeSchema = new Schema({
   channels: {
     type: Schema.Types.ObjectId,
     ref: 'ChannelsSchema',
-  }
+  },
+  invoices: {
+    type: Schema.Types.ObjectId,
+    ref: 'InvoicesSchema',
+  },
 })
 
 mongoose.model('lnnodes', LNnodeSchema);

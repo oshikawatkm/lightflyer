@@ -28,30 +28,11 @@ const LNnodeController = (() => {
       if(await !ChannelServices.isChannel()) {
         return
       }
-      // Generate Channel ID
-      let chan_id = Math.random() * 10000000000000000;
-      let channelReceiverOption = {
-        capacity:  option.push_sat,
-        local_balance:  0,
-        remote_balance: option.push_sat,
-        private:   option.private
-      }
-      ChannelServices.create(wsname, senderIPubkey, chan_id, options);
-      ChannelServices.create(wsname, receiverIPubkey, chan_id, channelReceiverOption);
-      return;
-    },
-    addInvoice:() => {
-      InvoiceServices.create()
-    },
-    payment:(estabrisherIPubukey, participantIPubukey) => {
       
     },
-    addChannelByOthers: (senderPubkey, receiverPubkey) => {
-
-    },
-    paymentByOthers:(senderPubkey, receiverPubkey) => {
-
-    },
+    payment: async (options) => {
+      await InvoiceServices.payment(oid, options);
+    }
   }
 })()
 

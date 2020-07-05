@@ -45,9 +45,9 @@ const HtlcSchema = new Schema({
 })
 
 const InvoiceSchema = new Schema({
-  channel: {
+  lnnode: {
     type: Schema.Types.ObjectId,
-    ref: 'channels'
+    ref: 'lnnodes'
   },
   memo: {
     type: String,
@@ -76,11 +76,11 @@ const InvoiceSchema = new Schema({
     default: false
   },
   creation_date: {
-    type: Number,
+    type: String,
     required: true,
   },
   settle_date: {
-    type: Number,
+    type: String,
     required: true,
   },
   payment_request: {

@@ -1,4 +1,4 @@
-const BlockchainManager = require('./controllers/BlockchainManager');
+const BlockchainCtr = require('./controllers/blockchain');
 const LNnodeCtr = require('./controllers/lnnode');
 const WorkspaceCtr = require('./controllers/workspace');
 const PeerCtr = require('./controllers/peer');
@@ -9,6 +9,7 @@ const db = require('../../cfg/db')
 const Workspace = require('./models/Workspace');
 const RestServer = require('./restServer/server.js');
 const GrpcServer = require('./grpcServer/server.js');
+const ReqHistoryCtr = require('./controllers/reqhistory');
 
 const App = (() => {
   let thisWSname;
@@ -47,6 +48,7 @@ const App = (() => {
 
         await LNnodeCtr.init(wsId)
         await PeerCtr.init(wsId)
+        await ReqHistoryCtr.init(wsId)
 
         // Read config
         let workspaceConfig = await WorkspaceCtr.get(thisWSname)

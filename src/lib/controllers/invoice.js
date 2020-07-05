@@ -1,17 +1,17 @@
 const logger = require('../utils/logger');
-const PeerServices = require('../services/peer');
+const InvoiceServices = require('../services/invoice');
 const LNnodeServices = require('../services/lnnode');
-
 const ChannelServices = require('../services/channel');
+const { Channel } = require('grpc');
 
 const ChannelController = (() => {
   let wsId;
   let selfIPubkey;
   let nodeIdList = [];
   
-  function _getTargetOIds (senderIPubkey, senderIPubkey) {
+  function _getTargetOIds (senderIPubkey, receiverIPubkey) {
     let sender = nodeIdList.filter(obj => obj.ipubkey === senderIPubkey);
-    let receiver = nodeIdList.filter(obj => obj.ipubkey === senderIPubkey);
+    let receiver = nodeIdList.filter(obj => obj.ipubkey === receiverIPubkey);
 
     return {
       senderId:   sender.oid,
@@ -44,40 +44,20 @@ const ChannelController = (() => {
     },
     addInvoiceToSelf:async (senderIPubkey, options) => {
       let oids = _getTargetOIds();
-      if(await !PeerServices.isPeer(wsname, selfIPubkey)) {
+      if(await !ChannelServices.isChannel()) {
         return
       }
-      // Generate Channel ID
-      let chan_id = Math.random() * 10000000000000000;
-      let channelReceiverOption = {
-        capacity:  option.push_sat,
-        local_balance:  0,
-        remote_balance: option.push_sat,
-        private:   option.private
-      }
-
       //Create Channel(Sender)
-      await ChannelServices.create(wsname, senderIPubkey, chan_id, options);
+      await InvoiceServices.create(oid, senderIPubkey, options);
       //Create Channel(Receiver)
-      await ChannelServices.create(wsname, selfIPubkey, chan_id, channelReceiverOption);
+      await InvoiceServices.create(oid, selfIPubkey, channelReceiverOption);
 
       return;
     },
     addInvoiceFromSelf:async (options) => {
-      // Generate Channel ID
-      let chan_id = Math.random() * 10000000000000000;
-      let channelReceiverOption = {
-        node_pubkey: selfIPubkey,
-        node_pubkey_string: selfIPubkey,
-        capacity:  options.push_sat,
-        local_funding_amount:  0,
-        push_sat: 0,
-        remote_balance: options.push_sat,
-        private:   options.private
-      }
       try {
-        let oids = _getTargetOIds();
-        if(await !PeerServices.isPeer(
+        let oids = _getTargetOIds(selfIPubkey, );
+        if(await !ChannelServices.hasChannel(
           oids.senderId,
           oids.receiverId,
           selfIPubkey,
@@ -86,45 +66,32 @@ const ChannelController = (() => {
           logger.error(`${oids.senderId} and ${oids.receiverId} are not Peer.`)
           return
         }
-
-        ChannelServices.create(oids.senderId, chan_id, options);
-        ChannelServices.create(oids.receiverId, chan_id, channelReceiverOption);
+        InvoiceServices.create(channelId, options);
       } catch(err) {
         logger.error(err)
       }
       return;
     },
     addCInvoiceByOthers:async (senderIPubkey,options) => {
-      if(await !PeerServices.isPeer(wsname, selfIPubkey)) {
+      if(await !ChannelServices.isChannel()) {
         return
-      }
-      // Generate Channel ID
-      let chan_id = Math.random() * 10000000000000000;
-      let channelReceiverOption = {
-        capacity:  option.push_sat,
-        local_balance:  0,
-        remote_balance: option.push_sat,
-        private:   option.private
       }
 
       //Create Channel(Sender)
-      await ChannelServices.create(wsname, senderIPubkey, chan_id, options);
+      await InvoiceServices.create(wsname, senderIPubkey, chan_id, options);
       //Create Channel(Receiver)
-      await ChannelServices.create(wsname, selfIPubkey, chan_id, channelReceiverOption);
+      await InvoiceServices.create(wsname, selfIPubkey, chan_id, channelReceiverOption);
 
       return;
     },
-    getAll: async () => {
-      return await ChannelServices.find();
+    getAll: async (options) => {
+      return await InvoiceServices.find(wsId, options);
     },
     get: async (workspaceName) => {
 
     },
     confirmed: async () => {
 
-    },
-    close: async () => {
-      
     }
   }
 })()
