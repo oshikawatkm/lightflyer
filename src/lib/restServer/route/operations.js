@@ -1,5 +1,4 @@
 function getinfo(req, res) {
-  console.log(req.method)
   let body = `
   {
     “version”: “0.10.99-beta commit=clock/v1.0.0-47-gd47d17b5d48ce6d24f70ad5b833052cd3d0011df”,

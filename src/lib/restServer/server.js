@@ -15,28 +15,40 @@ class RestServer {
   constructor(listen_port) {
     this.listen_port = listen_port;
     this.server = http.createServer();
+    this.data = ""; 
   }
 
   async listen() {
+    logger.info("Starting HTTP Server...")
     this.server.on('request', (req, res) => {
       logger.info(req.method + " " + url.parse(req.url).pathname)
+      req.on('data',async (chunk) => {
+        this.data += chunk;
+        console.log(data)
+      });
+
       try {
         let handles = this._setHandler()
-        this._router(handles, url.parse(req.url).pathname, req, res)
+        this._router(handles, url.parse(req.url).pathname, req, res, this)
       } catch (e) {
         logger.error(req.method + " " + req.url + ":" + e.message)
       }
-
-      res.writeHead(200, {"Content-Type": "text-plain"})
-      res.end();
     })
     this.server.listen(this.listen_port)
     logger.info(`HTTP Server running on port 127.0.0.1:${this.listen_port}`);
   }
 
-  _router(handle, pathname, req, res) {
+  async getbody () {
+    return this.data;
+  }
+
+  async resetbody () {
+    return this.data;
+  }
+
+  _router(handle, pathname, req, res, data) {
     if ( typeof handle[pathname] === 'function' ) {
-      handle[pathname] (req, res)
+      handle[pathname] (req, res, data)
     } else {
       logger.error("No request handler found for " + pathname)
       res.writeHead(404, {"Content-Type": "text/html"});

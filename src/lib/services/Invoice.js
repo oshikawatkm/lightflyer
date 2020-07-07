@@ -12,22 +12,24 @@ const ChannelServices = (() => {
 
 
   return {
-    create: (oid, options) => {
+    create:async (oid, options) => {
+      console.log(oid)
       new Invoice({
         lnnode: oid,
         memo: options.memo ? options.memo : "",
-        r_preimage: options.r_preimage ? options.r_preimage : randomGenerator(64),
-        r_hash: options.r_hash ? options.r_hash: randomGenerator(64),
-        value: parseInpt(options.value, 10),
-        value_msat: parseInpt(options.value_msat, 10),
+        r_preimage: options.r_preimage ?options.r_preimage : randomGenerator(64),
+        r_hash: options.r_hash ? options.r_hash : randomGenerator(64),
+        value: parseInt(options.value, 10),
+        value_msat: parseInt(options.value, 10) * 100,
         settled: false,
         creation_date: new Date().getTime().toString(),
         settle_date: "0",
-        r_hash: "ln"+ randomGenerator(249),
-        description_hash: null,
-        expiry: 3600,
-        fallback_addr: "",
-        cltv_expiry: 40,
+        payment_request: "ln" + randomGenerator(249),
+        r_hash: randomGenerator(64),
+        description_hash: options.description_hash ? options.description_hash : null,
+        expiry: options.expiry ? options.expiry : 3600,
+        fallback_addr: options.fallback_addr ? options.fallback_addr : "",
+        cltv_expiry: options.cltv_expiry ? options.cltv_expiry : 40,
         route_hints: true,
         private: false,
         add_index: 1,
@@ -63,46 +65,6 @@ const ChannelServices = (() => {
           return channel;
         })
       return channel;
-    },
-    payment:async (oid, options) => {
-      try {
-        let invoice = await Invoice
-          .findOne({ lnnode: oid, payment_request: options.payment_request },)
-          .then(invoice => {
-            return invoice;
-          })
-
-        let lnnode = await LNnode.findOne({"_id": ObjectId(oid)})
-        .then(lnnode => {
-          return lnnode;
-        })
-
-        await Invoice
-          .findOneAndUpdate(
-            { lnnode: oid },
-            {
-              amt_paid: invoice.value,
-              amt_paid_sat: invoice.value_msat,
-              amt_paid_msat:invoice.value,
-              settled: true,
-              settle_date: new Date().getTime().toString(),
-              state: "SETTLED"
-            }
-            )
-          .then(invoice, err => {
-            if (err) return new Error(err);
-            return invoice;
-          })
-        
-        await Channel
-          .findOneAndUpdate(
-            { "_id": ObjectId(oid)},
-            { balance: lnnode.balance - invoice.value }
-          )
-        } catch(err) {
-          return new Error("Hoge")
-        }
-      return;
     },
   }
 })()

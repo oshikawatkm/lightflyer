@@ -14,3 +14,4 @@ document.body.appendChild(root)
 
 // Now we can render our application into it
 render(<App />, document.getElementById('root'))
+

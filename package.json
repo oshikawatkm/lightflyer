@@ -28,6 +28,7 @@
     "bitcoinjs-lib": "^5.1.10",
     "bootstrap": "^4.5.0",
     "commander": "^5.1.0",
+    "crypto": "^1.0.1",
     "easeljs-react": "^0.2.0",
     "grpc": "^1.24.3",
     "log4js": "^6.3.0",

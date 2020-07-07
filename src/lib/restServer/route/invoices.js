@@ -5,16 +5,16 @@ function invoice() {
 
 }
 
-function invoices(req, res) {
+async function invoices(req, res) {
   if (req.method === "POST") {
     try {
       let result = await InvoiceCtr.addInvoiceFromSelf(req.options);
       let body = JSON.stringify(channelResSchemas.new(result), undefined, 4);
-      res.writeHead(200, {"Content-Type": "text/html"});
+      res.writeHead(200, {"Content-Type": "application/json"});
       res.write(body);
       res.end();
     } catch(err) {
-      res.writeHead(500, {"Content-Type": "text/html"});
+      res.writeHead(500, {"Content-Type": "application/json"});
       res.write(err);
       res.end();
     }

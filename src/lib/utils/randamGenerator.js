@@ -1,8 +1,10 @@
+const crypto = require('crypto')
 
-const randomGenerator = (digits) => {
+function randomGenerator (digits) {
   let S="abcdefghijklmnopqrstuvwxyz0123456789"
 
-  let random = Array.from(Array(digits)).map(()=>S[Math.floor(Math.random()*S.length)]).join('')
+  let random = Array.from(crypto.randomFillSync(new Uint8Array(digits))).map((n)=>S[n%S.length]).join('')
   return random;
 }
+
 module.exports = randomGenerator;

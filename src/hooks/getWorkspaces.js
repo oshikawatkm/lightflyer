@@ -15,13 +15,11 @@ const useGetWorkspaces = () => {
     ipcRenderer.on(getWorkspacesResponse, (e, res) => {
       let workspacesArr = []
       for (let i=0; i <= Object.keys(res).length -1; i++) {
-        console.log(res[i]._doc.name)
         workspacesArr.push(res[i]._doc.name)
       }
-      console.log(workspacesArr)
       setWSs(workspacesArr);
     })
-  })
+  },[])
 
 
   return [workspaces];

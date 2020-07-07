@@ -4,6 +4,8 @@ const mongoose = require('mongoose');
 require ('../models/Workspace');
 const Workspace = mongoose.model('workspaces');
 const LNnode = mongoose.model('lnnodes');
+const Invoice = mongoose.model('invoices');
+const Channel = mongoose.model('channels');
 
 const LNnodeServices = (() => {
   let defaultNodeNames = ["You", "Alice", "Bob", "Charlie", "Dave"]
@@ -20,8 +22,12 @@ const LNnodeServices = (() => {
     return true;
   };
 
-  function _genChanId() {
-    
+  async function _isSufficent(balance, value) {
+    if (balance < value) {
+      return false;
+    } else {
+      return true;
+    }
   }
 
   return {
@@ -52,66 +58,82 @@ const LNnodeServices = (() => {
         .then(res => {return res})
       return ln;
     },
-    addPeer:(senderAddr, reciverAdder) => {
-
-
-
-      let senderNodeIndex = nodes.findIndex((node) => {
-         return node.address === senderAddr
+    funding:async (oid, push_sat) => {
+      // 開設時のlocal_amt分nodeからbalanceをマイナス
+      await LNnode.findByIdAndUpdate(
+        oid,
+        {  $inc: { balance: -push_sat } }
+      )
+      .then((res, err) => {
+        if (err) console.log(err);
+        console.log(res);
       })
-      let reciverNodeIndex = nodes.findIndex((node) => { 
-        return node.address === reciverAdder
-      })
-      nodes[senderNodeIndex].addPeer(reciverAdder)
-      nodes[reciverNodeIndex].addPeer(senderAddr)
+
+      return;
     },
-    addChannel:(
-      node_pubkey, 
-      node_pubkey_string,
-      local_funding_amount,
-      push_sat,
-      target_conf,
-      sat_per_byte,
-      private,
-      min_htlc_msat,
-      remote_csv_delay,
-      min_confs,
-      spend_unconfirmed,
-      close_address,
-      funding_shim
-      ) => {
+    payment:async (ipubkey, options) => {
+      try{
+        let invoice = await Invoice
+          .findOne({payment_request: options.payment_request },)
+          .then((res,err) => {
+            return res
+          })
+
+        let lnnode = await LNnode.findOne({publicKey: ipubkey})
+        .then(res => {
+          return res;
+        })
+
+        let channel = await Channel.findOne({lnnode: lnnode._id})
+
+        // if (!await _isSufficent(channel.capacity - channel.local_balance - channel.remote_balance, invoice.value)){
+        //   console.log(channel.capacity - channel.local_balance - channel.remote_balance)
+        //   return;
+        // }
+        console.log(channel.chan_id)
+        await Invoice
+          .findOneAndUpdate(
+            { payment_request: options.payment_request,
+              // settled: false
+            },
+            {
+              amt_paid: invoice.value,
+              amt_paid_sat: invoice.value_msat,
+              amt_paid_msat: invoice.value,
+              settled: true,
+              settle_date: new Date().getTime().toString(),
+              state: "SETTLED"
+            })
 
     
-    },
-    addInvoice:() => {
-      if (!isChannel()) {
-        throw new Error()
-      }
 
-      new Invoice({
+        await Channel
+            .findByIdAndUpdate(
+              channel.id,
+              { $inc: { 
+                  local_balance: -invoice.value, 
+                  remote_balance: invoice.value 
+                },
+              },
+            )
 
-      })
-      .save()
-      .then()
-    },
-    payment:(estabrisherIPubukey, participantIPubukey) => {
-      let estabrisher = LNnode.findOne({ iditity_pubkey: estabrisherIPubukey })
-        .then(res => { return res })
-
-      let participant = LNnode.findOne({ iditity_pubkey: participantIPubukey })
-        .then(res => { return res })
-
-      Invoice.findOne({ remote_pubkey: establisherPubkey})
-        .then(res => {if (!res) { return false}})
-    },
-    addPeersByOthers: (senderPubkey, receiverPubkey) => {
-
-    },
-    addChannelByOthers: (senderPubkey, receiverPubkey) => {
-
-    },
-    addInvoiceByOthers: (senderPubkey, receiverPubkey) => {
-
+      console.log(channel.chan_id)
+        await Channel
+          .findOneAndUpdate(
+            {$and: [
+              {chan_id: channel.chan_id},
+              {_id: {$ne: channel.id}}
+            ]},
+            { $inc: { 
+                local_balance:  invoice.value, 
+                remote_balance: -invoice.value 
+              }
+            },
+          )
+        } catch(err) {
+          return new Error("Hoge")
+        }
+      return;
     },
     paymentByOthers:(senderPubkey, receiverPubkey) => {
 

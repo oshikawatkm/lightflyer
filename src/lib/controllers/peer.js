@@ -18,16 +18,21 @@ const PeerController = (() => {
     let receiver = nodeIdList.filter(obj => obj.ipubkey === receiverIPubkey);
 
     return {
-      senderId:   sender.oid,
-      receiverId: receiver.oid
+      senderId:   sender[0].oid,
+      receiverId: receiver[0].oid
     }
+  }
+
+  function _getTargetOId(ipubkey) {
+    let node = nodeIdList.filter(obj => obj.ipubkey === ipubkey);
+
+    return node[0].oid;
   }
 
   return {
     init: async (workspaceId) => {
       wsId = workspaceId;
       let nodes = await LNnodeServices.find(wsId);
-      console.log(nodes)
       nodes.map(node => {
         let obj = new Object();
         obj.name = node.name;
@@ -62,6 +67,7 @@ const PeerController = (() => {
         // [TASK]: Research Error Message
         return
       }
+      console.log(Oids.senderId)
       PeerServices.create(Oids.senderId, selfIPubkey, options);
       PeerServices.create(Oids.receiverId, receiverIPubkey, options);
     },
@@ -69,12 +75,16 @@ const PeerController = (() => {
       PeerServices.create(wsname, senderAddr, options);
       PeerServices.create(wsname, receiverAddr, options);
     },
-    getAll: async () => {
-      let peers = await PeerServices.findAll();
+    getAll: async (options) => {
+      console.log(options)
+      let oid = _getTargetOId(selfIPubkey);
+      let peers = await PeerServices.find(oid);
       return peers;
     },
-    get: async (workspaceName) => {
-      let peer = await PeerServices.findOne();
+    get: async (options) => {
+      
+      let peer = await PeerServices.findOne(oid);
+      console.log(peer)
       return peer;
     }
   }

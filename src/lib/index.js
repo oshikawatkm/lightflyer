@@ -2,7 +2,7 @@ const BlockchainCtr = require('./controllers/blockchain');
 const LNnodeCtr = require('./controllers/lnnode');
 const WorkspaceCtr = require('./controllers/workspace');
 const PeerCtr = require('./controllers/peer');
-const ServerCtr = require('./controllers/server');
+const ChannelCtr = require('./controllers/channel');
 const logger = require('./utils/logger');
 const mongoose = require('mongoose');
 const db = require('../../cfg/db')
@@ -21,7 +21,7 @@ const App = (() => {
       try{
         // connect MongoDB
         mongoose.Promise = global.Promise;
-        await mongoose.connect(db.mongoURI, {useUnifiedTopology: true, useNewUrlParser: true})
+        await mongoose.connect(db.mongoURI, {useUnifiedTopology: true, useNewUrlParser: true, useFindAndModify: false})
           .then(() => logger.info('MongoDB Connected...'))
           .catch(err => logger.error(err))
       }catch(err){
@@ -45,9 +45,9 @@ const App = (() => {
         // Set Workspace
         thisWSname = workspaceName;
         wsId = await WorkspaceCtr.init(thisWSname)
-
         await LNnodeCtr.init(wsId)
         await PeerCtr.init(wsId)
+        await ChannelCtr.init(wsId)
         await ReqHistoryCtr.init(wsId)
 
         // Read config
@@ -75,4 +75,5 @@ const App = (() => {
 })()
 
 module.exports = App;
-App.start()
+// App.init()
+// App.start("test2")

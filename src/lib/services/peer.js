@@ -22,14 +22,13 @@ const PeerServices = (() => {
       .then(() => logger.info("Success Saving Sender Peer!"))
       .catch(err => logger.error(err))
     },
-    find: async () => {
-
-      let workspaces = await Workspace.find()
+    find: async (oid) => {
+      let peers = await Peer.find({ lnnode: oid })
         .then(res => {
           return res
         });
 
-      return workspaces;
+      return peers;
     },
     findOne: async (workspaceName) => {
       

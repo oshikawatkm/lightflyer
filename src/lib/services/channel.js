@@ -4,20 +4,22 @@ require ('../models/Channel');
 const Channel = mongoose.model('channels');
 require ('../models/Workspace');
 const Workspace = mongoose.model('workspaces');
-
+require ('../models/LNnode');
+const LNnode = mongoose.model('lnnodes');
+const randomGenerator = require("../utils/randamGenerator");
 
 const ChannelServices = (() => {
   return {
-    create: (oid, chan_id, options) => {
+    create:async  (oid, channel_point, chan_id, options) => {
       new Channel({
         lnnode: oid,
         active: true,
         remote_pubkey: options.node_pubkey,
-        channel_point: "hoge",
+        channel_point: channel_point + ":0",
         chan_id: chan_id,
         capacity: parseInt(options.push_sat, 10),
         local_balance: parseInt(options.push_sat, 10),
-        remote_balance: parseInt(options.local_funding_amount, 10),
+        remote_balance: parseInt(options.remote_balance, 10),
         commit_fee: 9050,
         commit_weight: 600,
         fee_per_kw: 12500,
@@ -27,21 +29,14 @@ const ChannelServices = (() => {
         num_updates: 0,
         pending_htlcs: [],
         csv_delay: 144,
-        private: options.private
+        private: options.private? options.private : false
       })
       .save()
-      .then((node) => {
-        // 開設時のlocal_amt分nodeからbalanceをマイナス
-        logger.info(node)
-      })
-      return;
     },
     find: async (oid) => {
       let channels = await Channel
-        .find({"_id": ObjectId(oid)})
+        .find({workspace: oid})
         .then(channel => {
-
-          
           return channel;
         });
       return channels;
@@ -49,7 +44,7 @@ const ChannelServices = (() => {
     findOne: async (oid) => {
       let channel = await Channel
         .findOne({
-          "_id": ObjectId(oid),
+          _id: ObjectId(oid),
           active: true
         })
         .then(channel => {
@@ -61,17 +56,6 @@ const ChannelServices = (() => {
     destroy: () => {
       
     },
-    close:async (oid) => {
-      try {
-        await Channel
-          .findOneAndUpdate({
-            "_id": ObjectId(oid),
-            balance: lnnode.balance - invoice.value,
-          })
-      } catch(err) {
-        return new Error("Hoge")
-      }
-    },
     findChannelId: async(oid, ipubkey) => {
       let channel = await Channel.findOne({
         lnnode: oid, 
@@ -82,6 +66,65 @@ const ChannelServices = (() => {
           return res;
         })
       return channel._id;
+    },
+    close:async (oid, channel_point) => {
+      try {
+        let senderChannel = await Channel
+          .findOneAndUpdate(
+            { 
+              lnnode: oid, 
+              channel_point: channel_point, 
+              active: true
+            },
+            {
+              active: false,
+            }
+          ).then((res, err) => {
+            if(err) console.log(err);
+            return res;
+          })
+          let receiverChannel = await Channel
+          .findOneAndUpdate(
+            {
+              lnnode: {$ne: oid}, 
+              channel_point: channel_point, 
+              avtive: true
+            },
+            {
+              active: false,
+            }
+          ).then((res, err) => {
+            if(err) console.log(err)
+            return res;
+          })
+
+          await LNnode
+            .findByIdAndUpdate(
+              senderChannel.lnnode,
+              {
+                $inc: {balance:  senderChannel.local_balance}
+              }
+            ).then((res, err) => {
+              if(err) console.log(err)
+              return res;
+            })
+          
+            
+          await LNnode
+            .findByIdAndUpdate(
+              receiverChannel.lnnode,
+              {
+                $inc: {balance:  receiverChannel.local_balance}
+              }
+            ).then((res, err) => {
+              if(err) console.log(err)
+              return res;
+            })
+            console.log("fuck5")
+
+      } catch(err) {
+        return new Error("Hoge")
+      }
     },
     isChannel:async (senderOId, receiverOId, receiverPubkey, senderPubkey) => {
       await Channel.findOne({ 
@@ -106,6 +149,20 @@ const ChannelServices = (() => {
       
       return true;
     },
+    hasChannel:async (oId, ipubkey) => {
+      await Channel.findOne({ 
+        lnnode: oId, 
+        pub_key: ipubkey
+      })
+      .then(node => {
+        if (!node || node.active === false) {
+          return false;
+        }
+      })
+      
+      return true;
+    },
+
   }
 })()
 

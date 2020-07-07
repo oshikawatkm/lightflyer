@@ -3,27 +3,33 @@ const PeerServices = require('../services/peer');
 const LNnodeServices = require('../services/lnnode');
 
 const ChannelServices = require('../services/channel');
+const randomGenerator = require("../utils/randamGenerator")
 
 const ChannelController = (() => {
   let wsId;
   let selfIPubkey;
   let nodeIdList = [];
   
-  function _getTargetOIds (senderIPubkey, senderIPubkey) {
+  function _getTargetOIds (senderIPubkey, receiverIPubkey) {
     let sender = nodeIdList.filter(obj => obj.ipubkey === senderIPubkey);
-    let receiver = nodeIdList.filter(obj => obj.ipubkey === senderIPubkey);
-
+    let receiver = nodeIdList.filter(obj => obj.ipubkey === receiverIPubkey);
     return {
-      senderId:   sender.oid,
-      receiverId: receiver.oid
+      senderId:   sender[0].oid,
+      receiverId: receiver[0].oid
     }
   }
 
+  function _getTargetOId(ipubkey) {
+    let node = nodeIdList.filter(obj => obj.ipubkey == ipubkey);
+
+    return node[0].oid;
+  }
+  
   return {
     init: async (workspaceId) => {
       wsId = workspaceId;
       let nodes = await LNnodeServices.find(wsId);
-      console.log(nodes)
+
       nodes.map(node => {
         let obj = new Object();
         obj.name = node.name;
@@ -47,13 +53,14 @@ const ChannelController = (() => {
       if(await !PeerServices.isPeer(wsname, selfIPubkey)) {
         return
       }
+      
       // Generate Channel ID
       let chan_id = Math.random() * 10000000000000000;
       let channelReceiverOption = {
-        capacity:  option.push_sat,
+        capacity:  options.push_sat,
         local_balance:  0,
-        remote_balance: option.push_sat,
-        private:   option.private
+        remote_balance: options.push_sat,
+        private:   options.private
       }
 
       //Create Channel(Sender)
@@ -65,18 +72,20 @@ const ChannelController = (() => {
     },
     addChannelFromSelf:async (options) => {
       // Generate Channel ID
+      console.log(options)
       let chan_id = Math.random() * 10000000000000000;
       let channelReceiverOption = {
         node_pubkey: selfIPubkey,
         node_pubkey_string: selfIPubkey,
-        capacity:  options.push_sat,
-        local_funding_amount:  0,
-        push_sat: 0,
+        local_funding_amount:  "0",
+        push_sat: "0",
         remote_balance: options.push_sat,
         private:   options.private
       }
+      options.remote_balance = "0";
+      let channel_point = randomGenerator(64)
       try {
-        let oids = _getTargetOIds();
+        let oids = _getTargetOIds(selfIPubkey, options.node_pubkey);
         if(await !PeerServices.isPeer(
           oids.senderId,
           oids.receiverId,
@@ -86,9 +95,9 @@ const ChannelController = (() => {
           logger.error(`${oids.senderId} and ${oids.receiverId} are not Peer.`)
           return
         }
-
-        ChannelServices.create(oids.senderId, chan_id, options);
-        ChannelServices.create(oids.receiverId, chan_id, channelReceiverOption);
+        await ChannelServices.create(oids.senderId, channel_point, chan_id, options);
+        await ChannelServices.create(oids.receiverId, channel_point, chan_id, channelReceiverOption);
+        await LNnodeServices.funding(oids.senderId, parseInt(options.push_sat, 10));
       } catch(err) {
         logger.error(err)
       }
@@ -101,12 +110,14 @@ const ChannelController = (() => {
       // Generate Channel ID
       let chan_id = Math.random() * 10000000000000000;
       let channelReceiverOption = {
-        capacity:  option.push_sat,
-        local_balance:  0,
-        remote_balance: option.push_sat,
-        private:   option.private
+        capacity:  options.push_sat,
+        local_balance:  "0",
+        remote_balance: options.push_sat,
+        private:   options.private
       }
+      options.remote_balance = "0";
 
+      console.log(options)
       //Create Channel(Sender)
       await ChannelServices.create(wsname, senderIPubkey, chan_id, options);
       //Create Channel(Receiver)
@@ -115,7 +126,7 @@ const ChannelController = (() => {
       return;
     },
     getAll: async () => {
-      return await ChannelServices.find(oid);
+      return await ChannelServices.find(selfIPubkey);
     },
     get: async (workspaceName) => {
 
@@ -123,8 +134,9 @@ const ChannelController = (() => {
     confirmed: async () => {
 
     },
-    close: async () => {
-      await ChannelServices.close(wsname, selfIPubkey, chan_id, channelReceiverOption);
+    close: async (cp) => {
+      let oid = _getTargetOId(selfIPubkey)
+      await ChannelServices.close(oid, cp);
     }
   }
 })()

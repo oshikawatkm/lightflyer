@@ -19,11 +19,16 @@ const ChannelController = (() => {
     }
   }
 
+  function _getTargetOId(ipubkey) {
+    let node = nodeIdList.filter(obj => obj.ipubkey === ipubkey);
+
+    return node.oid;
+  }
+
   return {
     init: async (workspaceId) => {
       wsId = workspaceId;
       let nodes = await LNnodeServices.find(wsId);
-      console.log(nodes)
       nodes.map(node => {
         let obj = new Object();
         obj.name = node.name;
@@ -56,17 +61,15 @@ const ChannelController = (() => {
     },
     addInvoiceFromSelf:async (options) => {
       try {
-        let oids = _getTargetOIds(selfIPubkey, );
+        let nodeid = _getTargetOId(selfIPubkey);
         if(await !ChannelServices.hasChannel(
-          oids.senderId,
-          oids.receiverId,
+          nodeid,
           selfIPubkey,
-          options.node_pubkey
         )) {
-          logger.error(`${oids.senderId} and ${oids.receiverId} are not Peer.`)
+          logger.error(`You have no Channels.`)
           return
         }
-        InvoiceServices.create(channelId, options);
+        InvoiceServices.create(nodeid, options);
       } catch(err) {
         logger.error(err)
       }

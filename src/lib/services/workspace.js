@@ -28,7 +28,7 @@ const WorkspaceServices = (() => {
       return wsId;
     },
     find: async () => {
-      let workspaces = await Workspace.find()
+      let workspaces =  await Workspace.find()
         .then(res => {
           return res
         });

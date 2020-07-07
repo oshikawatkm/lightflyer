@@ -14,7 +14,7 @@ const {
 
 module.exports = function setupIpc() {
   ipcMain.on(initApp, (event,config) => {
-    WorkspaceCtr.init(config);
+    App.init(config);
   })
   
   ipcMain.on(startApp, (event,config) => {

@@ -11,11 +11,11 @@ const LNnodeController = (() => {
   let selfIPubkey;
   let selfAddr;
 
+
   return {
     init: async (workspaceId) => {
       wsId = workspaceId
       let SelfLNnode = await LNnodeServices.findOne(wsId, "You");
-      console.log(SelfLNnode)
       selfIPubkey = SelfLNnode.publicKey;
       selfAddr    = SelfLNnode.address;
     },
@@ -31,7 +31,7 @@ const LNnodeController = (() => {
       
     },
     payment: async (options) => {
-      await InvoiceServices.payment(oid, options);
+      await LNnodeServices.payment(selfIPubkey, options);
     }
   }
 })()

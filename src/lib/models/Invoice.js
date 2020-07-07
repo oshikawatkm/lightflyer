@@ -51,7 +51,6 @@ const InvoiceSchema = new Schema({
   },
   memo: {
     type: String,
-    required: true,
     default: ""
   },
   r_preimage:{
@@ -89,7 +88,6 @@ const InvoiceSchema = new Schema({
   },
   description_hash: {
     type: String,
-    required: true,
     default: null
   },
   expiry: {
@@ -99,7 +97,6 @@ const InvoiceSchema = new Schema({
   },
   fallback_addr:  {
     type: String,
-    required: true,
     default: ""
   },
   cltv_expiry: {
