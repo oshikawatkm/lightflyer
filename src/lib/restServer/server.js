@@ -20,16 +20,14 @@ class RestServer {
 
   async listen() {
     logger.info("Starting HTTP Server...")
-    this.server.on('request', (req, res) => {
+    let handles = this._setHandler()
+    this.server.on('request',async (req, res) => {
       logger.info(req.method + " " + url.parse(req.url).pathname)
-      req.on('data',async (chunk) => {
+      await req.on('data',async (chunk) => {
         this.data += chunk;
-        console.log(data)
       });
-
       try {
-        let handles = this._setHandler()
-        this._router(handles, url.parse(req.url).pathname, req, res, this)
+        this._router(handles, url.parse(req.url).pathname, req, res, this.data)
       } catch (e) {
         logger.error(req.method + " " + req.url + ":" + e.message)
       }
@@ -38,18 +36,11 @@ class RestServer {
     logger.info(`HTTP Server running on port 127.0.0.1:${this.listen_port}`);
   }
 
-  async getbody () {
-    return this.data;
-  }
-
-  async resetbody () {
-    return this.data;
-  }
-
   _router(handle, pathname, req, res, data) {
     if ( typeof handle[pathname] === 'function' ) {
-      handle[pathname] (req, res, data)
+       handle[pathname] (req, res, data, this)
     } else {
+      console.log("fuck")
       logger.error("No request handler found for " + pathname)
       res.writeHead(404, {"Content-Type": "text/html"});
       res.write("404 Not found");
@@ -62,7 +53,7 @@ class RestServer {
     handle["/v1/balance/blockchain"]      = utils.inpreparation;
     handle["/v1/balance/channels"]        = utils.inpreparation;
     handle["/v1/changepassword"]          = utils.inpreparation;
-    handle["/v1/channels"]                = channels.channels;
+    handle["/v1/channels"]                =  channels.channels;
     handle["/v1/channels/abandon"]        = channels.abandon;
     handle["/v1/channels/backup"]         = channels.backup;
     handle["/v1/channels/backup/restore"] = channels.backupRestore;

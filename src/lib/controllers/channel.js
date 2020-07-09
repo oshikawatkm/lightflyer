@@ -1,7 +1,6 @@
 const logger = require('../utils/logger');
 const PeerServices = require('../services/peer');
 const LNnodeServices = require('../services/lnnode');
-
 const ChannelServices = require('../services/channel');
 const randomGenerator = require("../utils/randamGenerator")
 
@@ -21,7 +20,6 @@ const ChannelController = (() => {
 
   function _getTargetOId(ipubkey) {
     let node = nodeIdList.filter(obj => obj.ipubkey == ipubkey);
-
     return node[0].oid;
   }
   
@@ -72,7 +70,6 @@ const ChannelController = (() => {
     },
     addChannelFromSelf:async (options) => {
       // Generate Channel ID
-      console.log(options)
       let chan_id = Math.random() * 10000000000000000;
       let channelReceiverOption = {
         node_pubkey: selfIPubkey,
@@ -85,6 +82,7 @@ const ChannelController = (() => {
       options.remote_balance = "0";
       let channel_point = randomGenerator(64)
       try {
+
         let oids = _getTargetOIds(selfIPubkey, options.node_pubkey);
         if(await !PeerServices.isPeer(
           oids.senderId,
@@ -101,7 +99,11 @@ const ChannelController = (() => {
       } catch(err) {
         logger.error(err)
       }
-      return;
+      return { 
+        funding_txid_bytes: "64",
+        funding_txid_str: channel_point,
+        output_index: 0
+      };
     },
     addChannelByOthers:async (senderIPubkey,options) => {
       if(await !PeerServices.isPeer(wsname, selfIPubkey)) {

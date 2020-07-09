@@ -1,21 +1,33 @@
 const logger = require('../utils/logger');
 const ReqHistoryervices = require('../services/reqhistory');
+const LNnodeServices  = require('../services/lnnode');
 
 const ReqHistoryController = (() => {
   let wsId;
-  
+  function _extractIPubkey(str) {
+    let index   = str.indexOf("@");
+    let ipubkey = str.slice(0, index);
+    return ipubkey;
+  }
+
   return {
-    init: async (workspaceId) => {
-      wsId = workspaceId;
+    init: async (wsId) => {
+      wsId = wsId;
     },
-    new: async () => {
-      await ReqHistoryervices.create(oid, request, sender, type);
+    newChannel: async (req, sender, receiverpubkey, type) => {
+      let receiver = await LNnodeServices.findOneByPubkey(receiverPubkey);
+      await ReqHistoryervices.create(wsId, req, sender, receiver.name, type);
+    },
+    newPeer: async (req, sender, addr, type) => {
+      let receiverIPubkey = _extractIPubkey(addr);
+      let receiver = await LNnodeServices.findOneByPubkey(receiverIPubkey);
+      await ReqHistoryervices.create(wsId, req, sender, receiver.name, type);
     },
     getAll: async (oid) => {
-      return await ReqHistoryervices.find(oid);
+      return await ReqHistoryervices.find();
     },
     get: async (workspaceName) => {
-
+      return await ReqHistoryervices.findOne()
     },
   }
 })()

@@ -58,6 +58,17 @@ const LNnodeServices = (() => {
         .then(res => {return res})
       return ln;
     },
+    findOneByPubkey: async (pubkey) => {
+
+      console.log(pubkey)
+      let ln = await LNnode.findOne({publicKey: pubkey})
+        .then(res => {
+          console.log(res)
+          return res
+        })
+        console.log(ln)
+      return ln;
+    },
     funding:async (oid, push_sat) => {
       // 開設時のlocal_amt分nodeからbalanceをマイナス
       await LNnode.findByIdAndUpdate(
@@ -116,8 +127,6 @@ const LNnodeServices = (() => {
                 },
               },
             )
-
-      console.log(channel.chan_id)
         await Channel
           .findOneAndUpdate(
             {$and: [

@@ -1,20 +1,21 @@
 const ChannelCtr = require('../../controllers/channel')
-const channelResSchemas = require('../responseSchemas/channels')
-const invoiceResSchemas = require('../responseSchemas/invoices');
-
+const ReqHistoryCtr = require('../../controllers/reqhistory')
+const channelResSchemas = require('../../ResponseSchemas/channels')
+const invoiceResSchemas = require('../../ResponseSchemas/invoices');
+const url = require('url');
 const logger = require('../../utils/logger');
 
 
-async function channels(req, res, server) {
+async function channels(req, res, data, server) {
+  let jsondata = JSON.parse(data);
   if (req.method === "POST") {
     try {
-      let data = await server.getbody();
-      console.log(data)
-      let result = await ChannelCtr.addChannelFromSelf(req.options)
-      let body = JSON.stringify(channelResSchemas.new(result), undefined, 4);
+      let result = await ChannelCtr.addChannelFromSelf(jsondata)
+      let body = JSON.stringify(channelResSchemas.addChannel(result), undefined, 4);
       res.writeHead(200, {"Content-Type": "application/json"});
       res.write(body);
       res.end();
+      ReqHistoryCtr.newChannel(req.method + " " + url.parse(req.url).pathname, "You", jsondata.node_pubkey_string, "HTTP")
     } catch(err) {
       logger.error(err)
       res.writeHead(500, {"Content-Type": "application/json"});
@@ -23,11 +24,12 @@ async function channels(req, res, server) {
     }
   } else if (req.method === "GET") {
     try {
-      let result = await ChannelCtr.getAll(req.options);
+      let result = await ChannelCtr.getAll(jsondata);
       let body =  JSON.stringify(await channelResSchemas.getChannels(result), undefined, 4);
       res.writeHead(200, {"Content-Type": "application/json"});
       res.write(body);
       res.end();
+      // ReqHistoryCtr.new(req.method + " " + url.parse(req.url).pathname, "You", "", "HTTP")
     } catch(err) {
       logger.error(err)
       awaitres.writeHead(500, {"Content-Type": "application/json"});
@@ -39,6 +41,7 @@ async function channels(req, res, server) {
     res.write(undefined);
     res.end();
   }
+  server.data = ""
 }
 
 async function transactions() {

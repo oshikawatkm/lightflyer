@@ -1,0 +1,72 @@
+syntax = "proto3";
+
+package lnrpc;
+
+service Lightning {
+  rpc listChannels (listChannelsRequest) returns (listChannelsResponse) {};
+  rpc openChannel (openChannelRequest) returns (openChannelResponse) {};
+}
+
+message listChannelsRequest{
+  bool active_only = 1;
+  bool inactive_only = 2;
+  bool public_only = 3;
+  bool private_only = 4;
+  bytes peer = 5;
+}
+
+message listChannelsResponse {
+  Channel channel = 1;
+}
+
+message openChannelRequest {
+  bytes node_pubkey = 1;
+  string node_pubkey_string = 2;
+  int64 local_funding_amount = 3;
+  int64 push_sat = 4;
+  int32 target_conf = 5;
+  int64 sat_per_byte = 6;
+  bool private = 7;
+  int64 min_htlc_msat = 8;
+  uint32 remote_csv_delay = 9;
+  int32 min_conf = 10;
+  bool spend_unconfirmed = 11;
+  string close_address = 12;
+  FundingShim funding_shim = 13;
+}
+
+message openChannelResponse {
+  
+}
+
+message FundingShim {
+  
+}
+
+message Channel {
+  bool active = 1;
+  string remote_pubkey = 2;
+  string channel_pubkey = 3;
+  string channel_point = 4;
+  string chan_id = 5;
+  string capacity = 6;
+  string local_balance = 7;
+  string remote_balance = 8;
+  string commit_fee = 9;
+  string commit_weight = 10;
+  string fee_per_kw = 11;
+  string unsettled_balance = 12;
+  string total_satoshis_sent = 13;
+  string total_satoshis_received = 14;
+  string num_updates = 15;
+  Htlc pending_htlcs = 16;
+  uint32 csv_delay = 17;
+  bool private = 18;
+}
+
+message Htlc {
+  bool incoming = 1;
+  string amount = 2;
+  string hash_lock = 3;
+  uint32 expiration_height = 4;
+}

@@ -53,13 +53,15 @@ const App = (() => {
         // Read config
         let workspaceConfig = await WorkspaceCtr.get(thisWSname)
 
-        // // Start REST Server
+        // Start HTTP Server
         let restServer = new RestServer(workspaceConfig.server_config.rest_listen_port)
         restServer.listen()
 
-        // // Start gRPC Server
-        // let grpcServer = new GrpcServer(workspaceConfig.server_config.rpc_listen_port)
-        // grpcServer.listen()
+        // Start gRPC Server
+        let grpcServer = new GrpcServer(workspaceConfig.server_config.rpc_listen_port)
+        grpcServer.listen()
+
+        
       }catch(err){
         logger.error(err)
         logger.error("Failed Starting App!!")

@@ -1,10 +1,11 @@
 const logger = require('../utils/logger');
 const mongoose = require('mongoose');
 require ('../models/ReqHistory');
+const ReqHistory = mongoose.model('reqhistorys');
 
 const ReqHistoryServices = (() => {
   return {
-    create: (oid, request, sender, type) => {
+    create: (oid, request, sender, receiver, type) => {
       new ReqHistory({
         workspace: oid,
         request: request,
