@@ -1,14 +1,17 @@
 const logger = require('../utils/logger');
 const WorkspaceServices = require('../services/workspace');
-
+const LNnodeServices  = require('../services/lnnode');
 
 const WorkspaceController = (() => {
   return {
     init: (wsname) => {
       return WorkspaceServices.findId(wsname)
     },
-    new: async (config, nodes) => {
-      return await WorkspaceServices.create(config, nodes);
+    new: async (config) => {
+      let wsId = await WorkspaceServices.create(config);
+      for (i = 0; i <= config.nodeNumber - 1 ;i++) {
+        await LNnodeServices.create(wsId, config);
+      }
     },
     getAll: async () => {
       return await WorkspaceServices.find();

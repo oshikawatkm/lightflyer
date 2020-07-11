@@ -8,7 +8,7 @@ const db = require('../../../cfg/db')
 
 const WorkspaceServices = (() => {
   return {
-    create:async (config, nodes) => {
+    create:async (config) => {
       let wsId = await new Workspace({
         name: config.workspaceName,
         server_config: {

@@ -19,16 +19,8 @@ const LNnodeController = (() => {
       selfIPubkey = SelfLNnode.publicKey;
       selfAddr    = SelfLNnode.address;
     },
-    factory: async (wsId, config) => {
-      for (i = 0; i <= config.nodeNumber - 1 ;i++) {
-        await LNnodeServices.create(wsId, config);
-      }
-    },
-    addInvoiceByOthers:async (senderIPubkey, receiverIPubkey) => {
-      if(await !ChannelServices.isChannel()) {
-        return
-      }
-      
+    getAll: async () => {
+      return await LNnodeServices.find(wsId);
     },
     payment: async (options) => {
       await LNnodeServices.payment(selfIPubkey, options);

@@ -51,7 +51,7 @@ const ChannelServices = (() => {
     },
     find: async (oid) => {
       let channels = await Channel
-        .find({"_id": ObjectId(oid)})
+        .findById(oid)
         .then(channel => {
           return channel;
         });

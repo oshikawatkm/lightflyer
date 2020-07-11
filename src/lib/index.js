@@ -28,16 +28,6 @@ const App = (() => {
         logger.error("Failed Initialzing App!!")
       }
     },
-    new:async (config) => {
-      try{
-        logger.info("Createing New Workspace...")
-
-        let wsId = await WorkspaceCtr.new(config);
-        await LNnodeCtr.factory(wsId, config);
-      }catch(err){
-        logger.error("Failed Createing New Workspace!!")
-      }
-    },
     start: async (workspaceName) => {
       try{
         logger.info("Start App...")

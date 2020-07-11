@@ -3,11 +3,13 @@ const fs = require("fs");
 const grpc = require("grpc");
 
 const lnrpc = require("./protos/lnrpc_grpc_pb");
+const {getChannels}  = require("./route/channel")
 
 
 class GrpcServer {
   constructor(listen_port) {
     this.listen_port = listen_port;
+    this.server = new grpc.Server();
   }
 
   async listen() {
@@ -24,15 +26,14 @@ class GrpcServer {
   
     let unsafeCreds = grpc.ServerCredentials.createInsecure();
   
-    var server = new grpc.Server();
     this._router()
-    server.bind(`127.0.0.1:${this.listen_port}`, unsafeCreds);
-    server.start();
+    this.server.bind(`127.0.0.1:${this.listen_port}`, unsafeCreds);
+    this.server.start();
     logger.info(`gRPC Server running on port 127.0.0.1:${this.listen_port}`);
   }
 
   _router() {
-    server.addService(lnrpc.lnrpcServiceService, {
+    this.server.addService(lnrpc.lnrpcServiceService, {
       getChannels: getChannels,
     })
 

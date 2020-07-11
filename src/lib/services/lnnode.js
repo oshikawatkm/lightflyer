@@ -1,6 +1,7 @@
 const logger = require('../utils/logger');
 const bitcoinjs = require('bitcoinjs-lib');
 const mongoose = require('mongoose');
+const { lchownSync } = require('fs');
 require ('../models/Workspace');
 const Workspace = mongoose.model('workspaces');
 const LNnode = mongoose.model('lnnodes');
@@ -31,12 +32,12 @@ const LNnodeServices = (() => {
   }
 
   return {
-    create: async (wsId, config) => {
+    create: async (oid, config) => {
       let keyPair = bitcoinjs.ECPair.makeRandom();
       let privateKey = keyPair.toWIF();
       let publicKey = keyPair.publicKey.toString('hex');
       new LNnode({
-        workspace: wsId,
+        workspace: oid,
         name: defaultNodeNames[i],
         balanace: config.satoshi,
         publicKey: publicKey,
@@ -46,11 +47,11 @@ const LNnodeServices = (() => {
       })
         .save()
         .catch(err => logger.error(err))
-
     },
     find:async (oid) => {
-      let lns = await LNnode.find({workspace: oid})
+      let lns = await LNnode.find({workspace: mongoose.Types.ObjectId(oid)})
         .then(res => {return res})
+        console.log(oid,lns )
       return lns;
     },
     findOne: async (oid, name) => {

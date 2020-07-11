@@ -7,7 +7,7 @@ const {
   getWorkspaceResponse,
 } = Channels
 
-const useGetWorkspace = () => {
+const useGetWorkspace = wsname => {
   const [workspaceName, setWSName] = useState("");
   const [rpcPort, setRpcPort] = useState(0);
   const [restPort, setRestPort] = useState(0);
@@ -16,14 +16,14 @@ const useGetWorkspace = () => {
   const [lnDaemon, setLND] = useState("");
 
   useEffect(() => {
-    ipcRenderer.send(getWorkspace, 'test-ws')
+    ipcRenderer.send(getWorkspace, wsname)
     ipcRenderer.on(getWorkspaceResponse, (e, workspace) => {
-      const workspaceName = workspace[0]._doc.name;
-      const rpcPort = workspace[0]._doc.server_config.rpc_listen_port;
-      const restPort =  workspace[0]._doc.server_config.rest_listen_port;
-      const blockchainDaemon = workspace[0]._doc.blockchain_config.daemon;
-      const bitcoinNetwork = workspace[0]._doc.blockchain_config.network;
-      const lnDaemon = workspace[0]._doc.ln_config.daemon;
+      const workspaceName = workspace._doc.name;
+      const rpcPort = workspace._doc.server_config.rpc_listen_port;
+      const restPort =  workspace._doc.server_config.rest_listen_port;
+      const blockchainDaemon = workspace._doc.blockchain_config.daemon;
+      const bitcoinNetwork = workspace._doc.blockchain_config.network;
+      const lnDaemon = workspace._doc.ln_config.daemon;
 
       setWSName(workspaceName);
       setRpcPort(rpcPort);

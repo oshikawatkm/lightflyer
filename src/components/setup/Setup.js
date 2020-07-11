@@ -2,30 +2,24 @@ import React, { Fragment, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Redirect, Link } from "react-router-dom";
 import TopplogyCanvas from './TopplogyCanvas';
+import useNewWorkspace from '../../hooks/newWorkspace';
 
-
-const electron = window.require('electron');
-const ipcRenderer = electron.ipcRenderer;
-const userHome = process.env[process.platform == "win32" ? "USERPROFILE" : "HOME"];
-const path = require('path')
 
 const Setup = () => {
   const [formData, setFormData] = useState({
     workspaceName: 'default2',
-    configFileDir: path.join(userHome, ".lightflyer"),
     miningPace: 10,
     fee: 1,
     nodeNumber: 5,
-    satoshi: 10000000000000,
+    satoshi: 100000000000,
     rpcport: 10001,
-    restport: 8001,
+    restport: 8081,
     address: '',
     identify_pubkey: ''
   })
 
   const { 
     workspaceName,
-    configFileDir,
     miningPace,
     fee,
     nodeNumber,
@@ -43,8 +37,8 @@ const Setup = () => {
   const onSubmit = e => {
     e.preventDefault();
 
-    ipcRenderer.send("init", formData)
-    //window.location.href = "dashboard"
+    useNewWorkspace(formData)
+    this.props.history.push('/');
   }
 
   // const displayChange = (e) => {
@@ -68,18 +62,6 @@ const Setup = () => {
                 placeholder="" 
                 name="workspaceName"
                 value={workspaceName}
-                onChange={onChange}
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="configFileDir">Config File Directory</label>
-              <input
-                id="configFileDir"
-                className="form-control" 
-                type="text"
-                placeholder="" 
-                name="configFileDir"
-                value={configFileDir}
                 onChange={onChange}
               />
             </div>

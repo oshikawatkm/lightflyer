@@ -20,13 +20,13 @@ function App() {
 			<Container>
 				<Route exact path="/" component={Top}></Route>
 				<Route exact path="/setup" component={Setup}></Route>
-				<Route exact path="/dashboard" component={Dashboard}></Route>
-				<Route exact path="/nodes" component={Nodes}></Route>
-				<Route exact path="/blockchain" component={Blockchain}></Route>
-				<Route exact path="/blocks" component={Blocks}></Route>
-				<Route exact path="/transactions" component={Transactions}></Route>
-				<Route exact path="/setting" component={Settings}></Route>
-				<Route exact path="/supports" component={Support}></Route>
+				<Route exact path="/workspaces/:ws/dashboard" component={Dashboard}></Route>
+				<Route exact path="/workspaces/:ws/nodes" component={Nodes}></Route>
+				<Route exact path="/workspaces/:ws/blockchain" component={Blockchain}></Route>
+				<Route exact path="/workspaces/:ws/blocks" component={Blocks}></Route>
+				<Route exact path="/workspaces/:ws/transactions" component={Transactions}></Route>
+				<Route exact path="/workspaces/:ws/setting" component={Settings}></Route>
+				<Route exact path="/workspaces/:ws/supports" component={Support}></Route>
 			</Container>
 		</HashRouter>
 	)

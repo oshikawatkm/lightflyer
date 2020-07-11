@@ -1,10 +1,9 @@
 const ChannelCtr = require('../../controllers/channel')
 const ReqHistoryCtr = require('../../controllers/reqhistory')
-const channelResSchemas = require('../../ResponseSchemas/channels')
-const invoiceResSchemas = require('../../ResponseSchemas/invoices');
+const channelResSchemas = require('../../ResponceSchema/channels')
+const invoiceResSchemas = require('../../ResponceSchema/invoices');
 const url = require('url');
 const logger = require('../../utils/logger');
-
 
 async function channels(req, res, data, server) {
   let jsondata = JSON.parse(data);

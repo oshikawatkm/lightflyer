@@ -1,5 +1,5 @@
 const InvoiceCtr = require('../../controllers/invoice')
-const channelResSchemas = require('../responseSchemas/channels')
+const channelResSchemas = require('../../ResponceSchema/channels')
 
 function invoice() {
 

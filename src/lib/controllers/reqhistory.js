@@ -23,8 +23,8 @@ const ReqHistoryController = (() => {
       let receiver = await LNnodeServices.findOneByPubkey(receiverIPubkey);
       await ReqHistoryervices.create(wsId, req, sender, receiver.name, type);
     },
-    getAll: async (oid) => {
-      return await ReqHistoryervices.find();
+    getAll: async () => {
+      return await ReqHistoryervices.find(wsId);
     },
     get: async (workspaceName) => {
       return await ReqHistoryervices.findOne()

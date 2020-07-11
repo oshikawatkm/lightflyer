@@ -4,7 +4,7 @@ const logger = require('../../utils/logger');
 
 
 
-function getChannels(call, callback) {
+async function getChannels(call, callback) {
   logger.info("gRPC getChannels");
   console.log(call.request)
   let result = await ChannelCtr.getAll(call.request);
@@ -12,4 +12,6 @@ function getChannels(call, callback) {
   channelResponce.setChannel();
   callback(null, channelResponce);
 }
+
+module.exports = getChannels;
 

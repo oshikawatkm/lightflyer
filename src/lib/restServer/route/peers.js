@@ -1,6 +1,6 @@
 const PeerCtr = require('../../controllers/peer')
 const ReqHistoryCtr = require('../../controllers/reqhistory')
-const peerResSchemas = require('../responseSchemas/peers');
+const peerResSchemas = require('../../responceSchema/peers');
 const url = require('url');
 const logger = require('../../utils/logger');
 

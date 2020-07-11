@@ -90,6 +90,14 @@ const ChannelController = (() => {
     getAll: async (options) => {
       return await InvoiceServices.find(wsId, options);
     },
+    getAllInWs: async () => {
+      let invoiceArr;
+      await nodeIdList.forEach(async (node) => {
+        let invoices = await InvoiceServices.find(node.oid);
+        invoiceArr.push(invoices)
+      })
+      return invoiceArr;
+    },
     get: async (workspaceName) => {
 
     },

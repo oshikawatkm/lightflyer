@@ -18,12 +18,11 @@ const ReqHistoryServices = (() => {
       return;
     },
     find: async (oid) => {
-      let reqhistory = await ReqHistory.find({oid})
+      let reqhistorys = await ReqHistory.find({workspace: oid}).limit(5)
         .then(res => {
           return res
         });
-
-      return reqhistory;
+      return reqhistorys;
     },
     findOne: async (workspaceName) => {
       
