@@ -1,17 +1,20 @@
 import React from 'react';
 import { Link } from "react-router-dom";
+import TopologyCanvas from './TopologyCanvas'
 import Footer from '../layout/Footer';
 import NodeFeed from './NodeFeed';
 import InvoiceFeed from './InvoiceFeed';
+import ReqHistoryFeed from './ReqHistoryFeed';
 import useGetWorkspace from '../../hooks/getWorkspace';
 import useStartApp from '../../hooks/startApp';
 import useGetReqHistorys from '../../hooks/getReqHistorys';
-import useGetLNnodes from '../../hooks/getLNnodes';
+import useGetLNnodesWithCount from '../../hooks/getLNnodesWithCount';
 import useGetInvoices from '../../hooks/getInvoices';
 
 const Dashboard = (state) => {
   let nodeContent;
   let invoiceContent;
+  let reqHistorysContent;
   const [
     workspaceName, 
     rpcPort, 
@@ -21,12 +24,12 @@ const Dashboard = (state) => {
     lnDaemon
   ] = useGetWorkspace(state.match.params.ws)
   const [status] = useStartApp(state.match.params.ws)
-  const [reqhistorys] = useGetReqHistorys(status)
-  const [nodes] = useGetLNnodes(status)
+  const [reqHistorys] = useGetReqHistorys(status)
+  const [nodes] = useGetLNnodesWithCount(status)
   const [invoices] = useGetInvoices(status)
 
-  if (nodes.length == 0) {
-    nodeContent = <p class="text-center mt-3">取得中...</p>
+  if (nodes[0] == undefined) {
+    nodeContent = <p class="text-center mt-3">obtaining...</p>
   } else {
     nodeContent = <NodeFeed nodes={nodes} />
   }
@@ -36,6 +39,13 @@ const Dashboard = (state) => {
   } else {
     invoiceContent = <InvoiceFeed invoices={invoices} />
   }
+
+  if (reqHistorys[0] === undefined) {
+    reqHistorysContent = <p class="text-center mt-3"> There are no Request History</p>
+  } else {
+    reqHistorysContent = <ReqHistoryFeed reqhistorys={reqHistorys} />
+  }
+
 
   return (
     <React.Fragment>
@@ -52,8 +62,7 @@ const Dashboard = (state) => {
           <div className="card mt-2">
             <div className="container">
               <h4 className="m-2">Network</h4>
-              <div id="network" className="bg-secondary mb-3" style={{ width:410, height: 230}}>
-              </div>
+                <TopologyCanvas />
               <h5>Environment</h5>
               <div className="row">
                 <div className="col-md-3"><p>BTC: {blockchainDaemon}</p></div>
@@ -101,26 +110,7 @@ const Dashboard = (state) => {
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <th scope="row">You</th>
-                    <td>100000</td>
-                    <td>12/12 01:11</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">Alice</th>
-                    <td>120000</td>
-                    <td>12/12 01:11</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">Bob</th>
-                    <td>100000</td>
-                    <td>12/12 01:11</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">Bob</th>
-                    <td>100000</td>
-                    <td>12/12 01:11</td>
-                  </tr>
+                 {invoiceContent}
                 </tbody>
               </table>
               </div>
@@ -140,30 +130,7 @@ const Dashboard = (state) => {
                       </tr>
                     </thead>
                     <tbody>
-                      <tr>
-                        <td>12/11 12:20</td>
-                        <td>call openChannel</td>
-                        <td>You</td>
-                        <td>Alice</td>
-                      </tr>
-                      <tr>
-                        <td>12/11 12:20</td>
-                        <td>POST /v1/transactions</td>
-                        <td>You</td>
-                        <td>Alice</td>
-                      </tr>
-                      <tr>
-                        <td>12/11 12:20</td>
-                        <td>POST /v1/channels</td>
-                        <td>You</td>
-                        <td>Alice</td>
-                      </tr>
-                      <tr>
-                      <td>12/11 12:20</td>
-                        <td>POST /v1/channels</td>
-                        <td>You</td>
-                        <td>Alice</td>
-                      </tr>
+                      {reqHistorysContent}
                     </tbody>
                   </table>
                 </div>

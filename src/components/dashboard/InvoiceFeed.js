@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import InvoiceTr from './NodeTr';
+import InvoiceTr from './InvoiceTr';
 
 class InvoiceFeed extends Component {
   render() {
     const { invoices } = this.props;
-    return invoices.map(invoice => <NodeTr key={invoice._id} invoice={invoice} />);
+    return invoices.map(invoice => <InvoiceTr key={invoice._id} invoice={invoice} />);
   }
 }
 

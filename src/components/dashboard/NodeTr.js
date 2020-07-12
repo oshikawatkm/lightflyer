@@ -10,8 +10,8 @@ class NodeTr extends Component {
       <tr>
         <th scope="Name">{node.name}</th>
         <td>{node.balance}</td>
-        <td>Peer</td>
-        <td>Channel</td>
+        <td>{node.peerCount}</td>
+        <td>{node.channelCount}</td>
       </tr>
     )
   }

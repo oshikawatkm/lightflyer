@@ -17,7 +17,6 @@ const useGetReqHistorys = (status) => {
       for (let i=0; i <= Object.keys(reqhistorys).length -1; i++) {
         reqHistoryArr.push(reqhistorys[i]._doc)
       }
-      console.log(reqHistorys)
       setReqHistorys(reqHistoryArr);
     })
   }, [status])

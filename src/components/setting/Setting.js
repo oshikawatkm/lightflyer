@@ -1,16 +1,15 @@
-import React, { Component } from 'react'
+import React from 'react'
 import Footer from '../layout/Footer';
+import Spinner from '../common/Spinner';
 
+const Setting = (props) => {
 
-class Setting extends Component {
-  render() {
-    return (
-      <React.Fragment>
-        
-        <Footer />
-      </React.Fragment>
-    )
-  }
+  return (
+    <React.Fragment>
+      <Spinner />
+      <Footer wsname={props.match.params.id}/>
+    </React.Fragment>
+  )
 }
 
 

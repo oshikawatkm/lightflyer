@@ -33,6 +33,14 @@ const PeerServices = (() => {
     findOne: async (workspaceName) => {
       
     },
+    findCount: async(oid) => {
+      let peerCount = await Peer.find({
+        lnnode: mongoose.Types.ObjectId(oid)
+      }).then(res => {
+        return res.length;
+      })
+      return peerCount;
+    },
     isPeer:async (senderOId, receiverOId, receiverPubkey, senderPubkey) => {
       await Peer.findOne({ 
         lnnode: senderOId, 

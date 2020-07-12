@@ -19,6 +19,8 @@ const {
   getReqHistorysResponse,
   getInvoices,
   getInvoicesResponse,
+  getLNnodesWithCount,
+  getLNnodesWithCountResponse,
   getLNnodes,
   getLNnodesResponse,
 } = Channels
@@ -54,12 +56,19 @@ module.exports = function setupIpc() {
 
   ipcMain.on(getInvoices, async (event) => {
     let invoices = await InvoiceCtr.getAllInWs();
+    console.log(11111111111)
+    console.log(invoices)
+    console.log(11111111111)
     event.reply(getInvoicesResponse, invoices)
+  })
+
+  ipcMain.on(getLNnodesWithCount, async (event) => {
+    let lnnodes = await LNnodeCtr.getAllWithCount();
+    event.reply(getLNnodesWithCountResponse, lnnodes)
   })
 
   ipcMain.on(getLNnodes, async (event) => {
     let lnnodes = await LNnodeCtr.getAll();
-    console.log(lnnodes)
     event.reply(getLNnodesResponse, lnnodes)
   })
 

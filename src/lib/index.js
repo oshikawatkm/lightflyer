@@ -3,6 +3,7 @@ const LNnodeCtr = require('./controllers/lnnode');
 const WorkspaceCtr = require('./controllers/workspace');
 const PeerCtr = require('./controllers/peer');
 const ChannelCtr = require('./controllers/channel');
+const InvoiceCtr = require('./controllers/invoice');
 const logger = require('./utils/logger');
 const mongoose = require('mongoose');
 const db = require('../../cfg/db')
@@ -39,6 +40,7 @@ const App = (() => {
         await PeerCtr.init(wsId)
         await ChannelCtr.init(wsId)
         await ReqHistoryCtr.init(wsId)
+        await InvoiceCtr.init(wsId)
 
         // Read config
         let workspaceConfig = await WorkspaceCtr.get(thisWSname)

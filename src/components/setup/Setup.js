@@ -1,7 +1,7 @@
 import React, { Fragment, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Redirect, Link } from "react-router-dom";
-import TopplogyCanvas from './TopplogyCanvas';
+import TopplogyCanvas from './TopologyCanvas';
 import useNewWorkspace from '../../hooks/newWorkspace';
 
 

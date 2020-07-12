@@ -9,12 +9,10 @@ const randomGenerator = require("../utils/randamGenerator");
 
 const ChannelServices = (() => {
 
-
-
   return {
-    create:async (oid, options) => {
-      console.log(oid)
-      new Invoice({
+    create:async (wsId, oid, options) => {
+      let invoice = await new Invoice({
+        workspace: wsId,
         lnnode: oid,
         memo: options.memo ? options.memo : "",
         r_preimage: options.r_preimage ?options.r_preimage : randomGenerator(64),
@@ -45,17 +43,18 @@ const ChannelServices = (() => {
       .save()
       .then((invoice) => {
         logger.info(invoice)
+        return invoice
       })
       
-      return;
+      return invoice;
     },
     find: async (oid) => {
-      let channels = await Channel
-        .findById(oid)
-        .then(channel => {
-          return channel;
+      let invoices = await Invoice
+        .find({lnnode: mongoose.Types.ObjectId(oid)})
+        .then(invoice => {
+          return invoice;
         });
-      return channels;
+      return invoices;
     },
     findOne: async (oid) => {
       let channel = await Channel
@@ -66,6 +65,16 @@ const ChannelServices = (() => {
         })
       return channel;
     },
+    findByWsId: async(wsId) => {
+      let invoices = await Invoice
+      .find({workspace: mongoose.Types.ObjectId(wsId)})
+      .sort({'timestamp': 'desc'})
+      .populate('lnnode')
+      .then(invoice => {
+        return invoice;
+      });
+    return invoices;
+    }
   }
 })()
 

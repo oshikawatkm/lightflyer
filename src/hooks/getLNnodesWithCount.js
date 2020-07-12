@@ -3,21 +3,21 @@ import Channels from '../../shared/channels'
 
 const { ipcRenderer } = window
 const { 
-  getLNnodes, 
-  getLNnodesResponse,
+  getLNnodesWithCount, 
+  getLNnodesWithCountResponse,
 } = Channels;
 
-const useGetLNnodes = (status) => {
+const useGetLNnodesWithCount = (status) => {
   const [nodes, setNodes] = useState([]);
 
   useEffect(() => {
     setTimeout(()=>{
-    ipcRenderer.send(getLNnodes, "ping")
+    ipcRenderer.send(getLNnodesWithCount, "ping")
     }, 2000)
-    ipcRenderer.on(getLNnodesResponse, (e, lnnodes) => {
+    ipcRenderer.on(getLNnodesWithCountResponse, (e, lnnodes) => {
       let lnnodeArr = []
       for (let i=0; i <= Object.keys(lnnodes).length -1; i++) {
-        lnnodeArr.push(lnnodes[i]._doc)
+        lnnodeArr.push(lnnodes[i])
       }
       setNodes(lnnodeArr);
     })
@@ -26,4 +26,4 @@ const useGetLNnodes = (status) => {
   return [nodes];
 }
 
-export default useGetLNnodes;
+export default useGetLNnodesWithCount;

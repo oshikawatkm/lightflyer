@@ -5,7 +5,7 @@ import useGetWorkspaces from '../../hooks/getWorkspaces'
 import { withRouter } from 'react-router-dom';
 
 const Setup = () => {
-  useInitApp()
+  //useInitApp()
   const [workspaces] = useGetWorkspaces();
 
   

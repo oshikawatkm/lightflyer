@@ -1,18 +1,17 @@
-import React, { Component } from 'react'
+import React from 'react'
 import Footer from '../layout/Footer';
+import Spinner from '../common/Spinner'
 
 
-
-class Blockchain extends Component {
-  render() {
-    return (
-      <React.Fragment>
-        
-        <Footer />
-      </React.Fragment>
-    )
-  }
+const BlockChain = (props) => {
+  
+  return (
+    <React.Fragment>
+      <Spinner />
+      <Footer wsname={props.match.params.id}/>
+    </React.Fragment>
+  )
 }
 
 
-export default Blockchain;
+export default BlockChain;

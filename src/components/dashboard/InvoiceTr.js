@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import DateFormater from '../common/dateformater';
 
 class InvoiceTr extends Component {
 
@@ -8,9 +9,9 @@ class InvoiceTr extends Component {
 
     return (
       <tr>
-        <th scope="Name">{invoice.balance}</th>
-        <td>{invoice.balance}</td>
-        <td>{invoice.balance}</td>
+        <th scope="Name">{invoice.lnnode._doc.name}</th>
+        <td>{invoice.value}</td>
+        <td>{DateFormater(invoice.timestamp)}</td>
       </tr>
     )
   }

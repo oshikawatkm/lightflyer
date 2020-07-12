@@ -19,6 +19,7 @@ const ReqHistoryServices = (() => {
     },
     find: async (oid) => {
       let reqhistorys = await ReqHistory.find({workspace: oid}).limit(5)
+      .sort({'timestamp': 'desc'})
         .then(res => {
           return res
         });

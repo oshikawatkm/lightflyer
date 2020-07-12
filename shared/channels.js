@@ -11,7 +11,9 @@ const Channels = {
   getReqHistorysResponse: 'getReqHistorysResponse',
   getInvoices: 'getInvoices',
   getInvoicesResponse: 'getInvoicesResponse',
-  getLNnodes: 'getLNnodes',
+  getLNnodesWithCount: 'getLNnodesWithCount',
+  getLNnodesWithCountResponse: 'getLNnodesWithCountResponse',
+  getLNnodes: 'getLNnodesResponse',
   getLNnodesResponse: 'getLNnodesResponse',
 }
 

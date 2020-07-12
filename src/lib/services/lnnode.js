@@ -51,7 +51,6 @@ const LNnodeServices = (() => {
     find:async (oid) => {
       let lns = await LNnode.find({workspace: mongoose.Types.ObjectId(oid)})
         .then(res => {return res})
-        console.log(oid,lns )
       return lns;
     },
     findOne: async (oid, name) => {
@@ -60,11 +59,8 @@ const LNnodeServices = (() => {
       return ln;
     },
     findOneByPubkey: async (pubkey) => {
-
-      console.log(pubkey)
       let ln = await LNnode.findOne({publicKey: pubkey})
         .then(res => {
-          console.log(res)
           return res
         })
         console.log(ln)
@@ -102,7 +98,6 @@ const LNnodeServices = (() => {
         //   console.log(channel.capacity - channel.local_balance - channel.remote_balance)
         //   return;
         // }
-        console.log(channel.chan_id)
         await Invoice
           .findOneAndUpdate(
             { payment_request: options.payment_request,

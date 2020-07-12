@@ -22,6 +22,23 @@ const LNnodeController = (() => {
     getAll: async () => {
       return await LNnodeServices.find(wsId);
     },
+    getAllWithCount: async () => {
+      let lnnodes = await LNnodeServices.find(wsId);
+      let resultArr = [];
+
+      for (let i = 0; i <= lnnodes.length -1; i++) {
+        let ln = new Object;
+        let channelCount = await ChannelServices.findCount(lnnodes[i]._id);
+        let peerCount = await PeerServices.findCount(lnnodes[i]._id);
+        ln.name = lnnodes[i].name;
+        ln.balance = lnnodes[i].balance;
+        ln.channelCount = channelCount;
+        ln.peerCount = peerCount;
+        resultArr.push(ln)
+      }
+      
+      return resultArr;
+    },
     payment: async (options) => {
       await LNnodeServices.payment(selfIPubkey, options);
     }

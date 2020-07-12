@@ -22,7 +22,7 @@ const ChannelController = (() => {
   function _getTargetOId(ipubkey) {
     let node = nodeIdList.filter(obj => obj.ipubkey === ipubkey);
 
-    return node.oid;
+    return node[0].oid;
   }
 
   return {
@@ -69,11 +69,10 @@ const ChannelController = (() => {
           logger.error(`You have no Channels.`)
           return
         }
-        InvoiceServices.create(nodeid, options);
+        return InvoiceServices.create(wsId, nodeid, options);
       } catch(err) {
         logger.error(err)
       }
-      return;
     },
     addCInvoiceByOthers:async (senderIPubkey,options) => {
       if(await !ChannelServices.isChannel()) {
@@ -88,15 +87,15 @@ const ChannelController = (() => {
       return;
     },
     getAll: async (options) => {
-      return await InvoiceServices.find(wsId, options);
+      let nodeid = _getTargetOId(selfIPubkey);
+      return await InvoiceServices.find(nodeid, options);
     },
     getAllInWs: async () => {
-      let invoiceArr;
-      await nodeIdList.forEach(async (node) => {
-        let invoices = await InvoiceServices.find(node.oid);
-        invoiceArr.push(invoices)
-      })
-      return invoiceArr;
+      let invoices = await InvoiceServices.findByWsId(wsId);
+      console.log("!!!!!!!!!!!!!!!!")
+      console.log(invoices)
+      console.log("!!!!!!!!!!!!!!!!")
+      return invoices;
     },
     get: async (workspaceName) => {
 

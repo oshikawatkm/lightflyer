@@ -45,6 +45,10 @@ const HtlcSchema = new Schema({
 })
 
 const InvoiceSchema = new Schema({
+  workspace: {
+    type: Schema.Types.ObjectId,
+    ref: 'workspaces'
+  },
   lnnode: {
     type: Schema.Types.ObjectId,
     ref: 'lnnodes'
@@ -156,6 +160,10 @@ const InvoiceSchema = new Schema({
     required: true,
     default: false
   },
+  timestamp: { 
+    type: Date, 
+    default: Date.now()
+  }
 })
 
 mongoose.model('invoices', InvoiceSchema);

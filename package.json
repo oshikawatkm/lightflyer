@@ -22,6 +22,7 @@
   "author": "Oshikawa Takumj",
   "license": "MIT",
   "dependencies": {
+    "@createjs/easeljs": "^2.0.0-beta.4",
     "@fortawesome/fontawesome-free": "^5.13.0",
     "@grpc/proto-loader": "^0.5.4",
     "bip39": "^3.0.2",
@@ -39,7 +40,7 @@
     "nodemon": "^2.0.4",
     "protoc": "^1.0.4",
     "react": "^16.13.1",
-    "react-bootstrap": "^1.0.1",
+    "react-bootstrap": "^1.2.1",
     "react-dom": "^16.13.1",
     "react-moment": "^0.9.7",
     "react-router": "^5.2.0",

@@ -23,6 +23,9 @@ const ReqHistoryController = (() => {
       let receiver = await LNnodeServices.findOneByPubkey(receiverIPubkey);
       await ReqHistoryervices.create(wsId, req, sender, receiver.name, type);
     },
+    newInvoice: async(req, sender, type) => {
+      await ReqHistoryervices.create(wsId, req, sender, "-", type);
+    },
     getAll: async () => {
       return await ReqHistoryervices.find(wsId);
     },

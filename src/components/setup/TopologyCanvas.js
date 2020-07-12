@@ -41,42 +41,18 @@ class TopplogyCanvas extends Component {
     ctx.fillStyle = "#17a2b8" ;
     ctx.fill() ;
     
-
+    //carol
     ctx.beginPath() ;
     ctx.arc( 515, 75, 30, 0 * Math.PI / 180, 360 * Math.PI / 180, false ) ;
     ctx.fillStyle = "#17a2b8" ;
     ctx.fill();
 
-
+    //dave
     ctx.beginPath() ;
     ctx.arc( 600, 150, 30, 0 * Math.PI / 180, 360 * Math.PI / 180, false ) ;
     ctx.fillStyle = "#17a2b8" ;
     ctx.fill() ;
 
-    ctx.beginPath() ;
-    ctx.arc( 205, 250, 30, 0 * Math.PI / 180, 360 * Math.PI / 180, false ) ;
-    ctx.fillStyle = "#17a2b8" ;
-    ctx.fill() ;
-
-    ctx.beginPath() ;
-    ctx.arc( 600, 250, 30, 0 * Math.PI / 180, 360 * Math.PI / 180, false ) ;
-    ctx.fillStyle = "#17a2b8" ;
-    ctx.fill() ;
-
-    ctx.beginPath() ;
-    ctx.arc( 275, 300, 30, 0 * Math.PI / 180, 360 * Math.PI / 180, false ) ;
-    ctx.fillStyle = "#17a2b8" ;
-    ctx.fill() ;
-
-    ctx.beginPath() ;
-    ctx.arc( 515, 300, 30, 0 * Math.PI / 180, 360 * Math.PI / 180, false ) ;
-    ctx.fillStyle = "#17a2b8" ;
-    ctx.fill() ;
-
-    ctx.beginPath() ;
-    ctx.arc( 400, 350, 30, 0 * Math.PI / 180, 360 * Math.PI / 180, false ) ;
-    ctx.fillStyle = "#17a2b8" ;
-    ctx.fill() ;
   }
 
   startDrawing(x, y) {

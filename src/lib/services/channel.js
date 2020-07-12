@@ -67,6 +67,14 @@ const ChannelServices = (() => {
         })
       return channel._id;
     },
+    findCount: async(oid) => {
+      let channelCount = await Channel.find({
+        lnnode: mongoose.Types.ObjectId(oid)
+      }).then(res => {
+        return res.length;
+      })
+      return channelCount;
+    },
     close:async (oid, channel_point) => {
       try {
         let senderChannel = await Channel
