@@ -39,8 +39,12 @@ const LNnodeController = (() => {
       
       return resultArr;
     },
+    getMe: async () => {
+      await LNnodeServices.findOne(wsId, selfIPubkey);
+      
+    },
     payment: async (options) => {
-      await LNnodeServices.payment(selfIPubkey, options);
+      return await LNnodeServices.payment(selfIPubkey, options);
     }
   }
 })()

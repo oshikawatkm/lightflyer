@@ -7,12 +7,6 @@ const PeerController = (() => {
   let selfIPubkey;
   let nodeIdList = [];
 
-  function _extractIPubkey(str) {
-    let index   = str.indexOf("@");
-    let ipubkey = str.slice(0, index);
-    return ipubkey;
-  }
-
   function _getTargetOIds (senderIPubkey, receiverIPubkey) {
     let sender = nodeIdList.filter(obj => obj.ipubkey === senderIPubkey);
     let receiver = nodeIdList.filter(obj => obj.ipubkey === receiverIPubkey);
@@ -55,13 +49,12 @@ const PeerController = (() => {
       PeerServices.create(Oids.receiverId, senderIPubkey, receiverOptions);
     },
     addPeerFromSelf:async (options) => {
-      let receiverIPubkey = _extractIPubkey(options.addr);
-      let Oids = _getTargetOIds(selfIPubkey, receiverIPubkey);
+      let Oids = _getTargetOIds(selfIPubkey, options.addr.pubkey);
       if(await !PeerServices.isPeer(
         Oids.senderId, 
         Oids.receiverId,
         selfIPubkey,
-        receiverIPubkey
+        options.addr.pubkey
       )) {
         logger.error(`${oids.senderId} and ${oids.receiverId} are not Peer.`)
         // [TASK]: Research Error Message
@@ -69,7 +62,7 @@ const PeerController = (() => {
       }
       console.log(Oids.senderId)
       PeerServices.create(Oids.senderId, selfIPubkey, options);
-      PeerServices.create(Oids.receiverId, receiverIPubkey, options);
+      PeerServices.create(Oids.receiverId, options.addr.pubkey, options);
     },
     addPeersByOthers: (senderAddr, receiverAddr, options) => {
       PeerServices.create(wsname, senderAddr, options);

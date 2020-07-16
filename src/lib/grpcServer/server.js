@@ -2,9 +2,11 @@ const logger = require("../utils/logger")
 const fs = require("fs");
 const grpc = require("grpc");
 
-const lnrpc = require("./protos/lnrpc_grpc_pb");
-const {getChannels}  = require("./route/channel")
-
+const lnrpc = require("./protos/rpc_grpc_pb");
+const {listChannels, openChannel, closeChannel}  = require("./route/channel")
+const {sendPaymentSync}  = require("./route/lnnode")
+const {addInvoice, listInvoices}  = require("./route/invoice")
+const {connectPeer, listPeers}  = require("./route/peer")
 
 class GrpcServer {
   constructor(listen_port) {
@@ -33,8 +35,16 @@ class GrpcServer {
   }
 
   _router() {
-    this.server.addService(lnrpc.lnrpcServiceService, {
-      getChannels: getChannels,
+
+    this.server.addService(lnrpc.LightningService, {
+      listChannels: listChannels,
+      openChannel: openChannel,
+      connectPeer: connectPeer,
+      listPeers: listPeers,
+      addInvoice: addInvoice,
+      listInvoices: listInvoices,
+      sendPaymentSync: sendPaymentSync,
+      closeChannel: closeChannel
     })
 
   }

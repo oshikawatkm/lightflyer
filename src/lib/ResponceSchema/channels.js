@@ -1,4 +1,7 @@
 
+const randomGenerator = require("../utils/randamGenerator");
+
+
 
 function addChannel(channel) {
   console.log(channel)
@@ -9,9 +12,6 @@ function addChannel(channel) {
 
   return channelRes;
 }
-
-
-
 
 
 
@@ -93,44 +93,47 @@ function getChannel(channel) {
 
 
 
-function payment(channel) {
+function payment(res) {
   let channelRes = new Object();
-  channelRes.active         = channel.active;
-  channelRes.remote_pubkey  = channel.remote_pubkey;
-  channelRes.channel_point  = channel.remote_pubkey;
-  channelRes.chan_id        = channel.chan_id;
-  channelRes.capacity       = channel.capacity;
-  channelRes.local_balance  = channel.local_balance;
-  channelRes.remote_balance = channel.remote_balance;
-  channelRes.commit_fee     = channel.commit_fee;
-  channelRes.commit_weight  = channel.commit_weight;
-  channelRes.fee_per_kw     = channel.fee_per_kw;
-  channelRes.unsettled_balance = unsettled_balance;
-  channelRes.total_satoshis_sent = total_satoshis_sent;
-  channelRes.total_satoshis_received = total_satoshis_received;
-  channelRes.num_updates    = channel.num_updates;
-  channelRes.pending_htlcs  = channel.pending_htlcs;
-  channelRes.csv_delay      = channel.csv_delay;
-  channelRes.private        = channel.private;
-  channelRes.initiator      = channel.initiator;
-  channelRes.chan_status_flags = chan_status_flags;
-  channelRes.local_chan_reserve_sat = local_chan_reserve_sat;
-  channelRes.remote_chan_reserve_sat = remote_chan_reserve_sat;
-  channelRes.static_remote_key = static_remote_key;
-  channelRes.commitment_type = commitment_type;
-  channelRes.lifetime       = channel.lifetime;
-  channelRes.uptime         = channel.uptime;
-  channelRes.close_address  = channel.close_address;
-  channelRes.push_amount_sat = channel.push_amount_sat;
-  channelRes.thaw_height    = channel.thaw_height;
+  channelRes.payment_error         = false;
+  channelRes.payment_preimage  = res.invoice.r_preimage;
+  channelRes.payment_route  = {
+    total_time_lock: 0,
+    total_fees: "0",
+    total_amt: res.channel.capacity.toString(),
+    hops: [
+      {
+        chan_id: res.channel.chan_id.toString(),
+        chan_capacity:res.channel.capacity.toString(),
+        amt_to_forward: "0",
+        fee: "0",
+        expiry: 0
+      }
+    ]
+  }
+
 
   return channelRes;
 }
 
+function closed(res) {
+  let channelRes = new Object();
+  channelRes.close_pending = {
+    txid: res.txid,
+    output_index: res.output_index
+  }
+  channelRes.confirmation =  {
+    block_sha: "string",
+    block_height: 0,
+    num_confs_left: 0
+  },
+  channelRes.chan_close = {
+    closing_txid: randomGenerator(64).toString(),
+    success: true
+  }
 
-
-
-
+  return channelRes;
+}
 
 
 
@@ -148,7 +151,7 @@ exports.payment = payment;
 // exports.backup = backup;
 // exports.backupRestore = backupRestore;
 // exports.backupVerify = backupVerify;
-// exports.closed = closed;
+exports.closed = closed;
 // exports.pending = pending;
 // exports.transactions = transactions;
 // exports.transactionsRoute = transactionsRoute;

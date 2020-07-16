@@ -16,8 +16,16 @@ const WorkspaceServices = (() => {
           rest_listen_port: config.restport,
         },
         blockchain_config: {
-          minepace: config.minepace,
+          daemon: config.daemon ? config.daemon : "btcd",
+          network: config.network ? config.network : "mainnet",
+          automine: config.automine ? config.automine : true,
+          minepace: config.minepace ? config.minepace : "10",
+          fee: config.fee ? config.fee : 8000,
         },
+        ln_config: {
+          daemon: config.daemon ? config.daemon : "lnd",
+          version: config.daemon ? config.daemon : "0.10.99-beta commit=clock/v1.0.0-47-gd47d17b5d48ce6d24f70ad5b833052cd3d0011df",
+        }
       })
       .save()
       .then(ws => {

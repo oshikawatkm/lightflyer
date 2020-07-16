@@ -10,7 +10,7 @@ const WorkspaceController = (() => {
     new: async (config) => {
       let wsId = await WorkspaceServices.create(config);
       for (i = 0; i <= config.nodeNumber - 1 ;i++) {
-        await LNnodeServices.create(wsId, config);
+        await LNnodeServices.create(wsId, config, i);
       }
     },
     getAll: async () => {

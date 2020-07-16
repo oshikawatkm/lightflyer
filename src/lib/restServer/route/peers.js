@@ -14,7 +14,7 @@ async function listpeers(req, res, data, server) {
       res.writeHead(200, {"Content-Type": "text/html"});
       res.write("{}");
       res.end();
-      ReqHistoryCtr.newPeer(req.method + " " + url.parse(req.url).pathname, "You", jsondata.addr, "HTTP")
+      ReqHistoryCtr.newPeer(req.method + " " + url.parse(req.url).pathname, "You", jsondata.addr.pubkey, "HTTP")
     } catch(err) {
       console.log(err)
       res.writeHead(500, {"Content-Type": "text/html"});

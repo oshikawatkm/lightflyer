@@ -4,19 +4,13 @@ require ('../models/Peer');
 const Peer = mongoose.model('peers');
 
 const PeerServices = (() => {
-  function _extractAddress(str) {
-    let index   = str.indexOf("@");
-    let address = str.slice(index + 1);
-    return address;
-  }
 
   return {
     create: (oid, ipubkey, options) => {
-      let address = _extractAddress(options.addr);
       new Peer({
         lnnode:  oid,
         pub_key: ipubkey,
-        address: address,
+        address: options.addr.host,
       })
       .save()
       .then(() => logger.info("Success Saving Sender Peer!"))

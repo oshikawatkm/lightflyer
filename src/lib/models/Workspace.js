@@ -39,6 +39,11 @@ const WorkspaceSchema = new Schema({
       type: Number,
       required: true,
       default: 10
+    },
+    fee: {
+      type: Number,
+      required: true,
+      default: 8000
     }
   },
   ln_config: {

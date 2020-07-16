@@ -11,9 +11,9 @@ const useGetLNnodesWithCount = (status) => {
   const [nodes, setNodes] = useState([]);
 
   useEffect(() => {
-    setTimeout(()=>{
+    setInterval(()=>{
     ipcRenderer.send(getLNnodesWithCount, "ping")
-    }, 2000)
+    }, 3000)
     ipcRenderer.on(getLNnodesWithCountResponse, (e, lnnodes) => {
       let lnnodeArr = []
       for (let i=0; i <= Object.keys(lnnodes).length -1; i++) {

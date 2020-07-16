@@ -14,7 +14,7 @@ const ChannelServices = (() => {
       new Channel({
         lnnode: oid,
         active: true,
-        remote_pubkey: options.node_pubkey,
+        remote_pubkey: options.node_pubkey_string,
         channel_point: channel_point + ":0",
         chan_id: chan_id,
         capacity: parseInt(options.push_sat, 10),
@@ -35,7 +35,7 @@ const ChannelServices = (() => {
     },
     find: async (oid) => {
       let channels = await Channel
-        .find({workspace: oid})
+        .find({lnnode: oid})
         .then(channel => {
           return channel;
         });
@@ -75,34 +75,38 @@ const ChannelServices = (() => {
       })
       return channelCount;
     },
-    close:async (oid, channel_point) => {
+    close:async (wsId, oid, funding_txid_str, output_index) => {
       try {
+        let ws = await Workspace.findById(wsId)
+      .then((res, err) => {
+        return res
+      })
         let senderChannel = await Channel
           .findOneAndUpdate(
             { 
               lnnode: oid, 
-              channel_point: channel_point, 
+              channel_point: funding_txid_str +":"+output_index, 
               active: true
             },
             {
               active: false,
             }
           ).then((res, err) => {
-            if(err) console.log(err);
+            if(err) logger.error(err);
             return res;
           })
           let receiverChannel = await Channel
           .findOneAndUpdate(
             {
               lnnode: {$ne: oid}, 
-              channel_point: channel_point, 
+              channel_point: funding_txid_str +":"+output_index, 
               avtive: true
             },
             {
               active: false,
             }
           ).then((res, err) => {
-            if(err) console.log(err)
+            if(err) logger.error(err)
             return res;
           })
 
@@ -110,10 +114,10 @@ const ChannelServices = (() => {
             .findByIdAndUpdate(
               senderChannel.lnnode,
               {
-                $inc: {balance:  senderChannel.local_balance}
+                $inc: {balance:  senderChannel.local_balance - ws.blockchain_config.fee}
               }
             ).then((res, err) => {
-              if(err) console.log(err)
+              if(err) logger.error(err)
               return res;
             })
           
@@ -122,14 +126,17 @@ const ChannelServices = (() => {
             .findByIdAndUpdate(
               receiverChannel.lnnode,
               {
-                $inc: {balance:  receiverChannel.local_balance}
+                $inc: {balance:  receiverChannel.local_balance - ws.blockchain_config.fee}
               }
             ).then((res, err) => {
-              if(err) console.log(err)
+              if(err) logger.error(err)
               return res;
             })
-            console.log("fuck5")
 
+          return {
+            txid: funding_txid_str,
+            output_index: output_index
+          }
       } catch(err) {
         return new Error("Hoge")
       }

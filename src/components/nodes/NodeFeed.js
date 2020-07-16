@@ -6,7 +6,7 @@ class NodeFeed extends Component {
   render() {
     const { nodes } = this.props;
     console.log(nodes)
-    return nodes.map(node => <NodeCard key={node.name} node={node} />);
+    return nodes.map(node => <NodeCard key={node.name} node={node} nodes={nodes} />);
   }
 }
 

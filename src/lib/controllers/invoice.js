@@ -92,9 +92,6 @@ const ChannelController = (() => {
     },
     getAllInWs: async () => {
       let invoices = await InvoiceServices.findByWsId(wsId);
-      console.log("!!!!!!!!!!!!!!!!")
-      console.log(invoices)
-      console.log("!!!!!!!!!!!!!!!!")
       return invoices;
     },
     get: async (workspaceName) => {

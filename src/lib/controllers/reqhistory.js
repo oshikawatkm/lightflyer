@@ -15,12 +15,11 @@ const ReqHistoryController = (() => {
       wsId = wsId;
     },
     newChannel: async (req, sender, receiverpubkey, type) => {
-      let receiver = await LNnodeServices.findOneByPubkey(receiverPubkey);
+      let receiver = await LNnodeServices.findOneByPubkey(receiverpubkey);
       await ReqHistoryervices.create(wsId, req, sender, receiver.name, type);
     },
     newPeer: async (req, sender, addr, type) => {
-      let receiverIPubkey = _extractIPubkey(addr);
-      let receiver = await LNnodeServices.findOneByPubkey(receiverIPubkey);
+      let receiver = await LNnodeServices.findOneByPubkey(addr);
       await ReqHistoryervices.create(wsId, req, sender, receiver.name, type);
     },
     newInvoice: async(req, sender, type) => {

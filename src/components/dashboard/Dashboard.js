@@ -80,7 +80,7 @@ const Dashboard = (state) => {
           <div className="card my-3">
             <div className="container">
             <h5 className="m-2">Nodes</h5>
-            <div class="table-wrapper-scroll-y my-custom-scrollbar mb-2">
+            <div class="table-wrapper-scroll-y my-custom-scrollbar table-responsive mb-2">
               <table className="table table-sm">
                 <thead>
                   <tr>
@@ -107,6 +107,8 @@ const Dashboard = (state) => {
                     <th scope="Name">Name</th>
                     <th scope="Name">Value</th>
                     <th scope="Name">Date</th>
+                    <th scope="Name">Settled</th>
+                    <th scope="Name">payment_request</th>
                   </tr>
                 </thead>
                 <tbody>

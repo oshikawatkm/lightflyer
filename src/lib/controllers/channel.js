@@ -95,7 +95,7 @@ const ChannelController = (() => {
         }
         await ChannelServices.create(oids.senderId, channel_point, chan_id, options);
         await ChannelServices.create(oids.receiverId, channel_point, chan_id, channelReceiverOption);
-        await LNnodeServices.funding(oids.senderId, parseInt(options.push_sat, 10));
+        await LNnodeServices.funding(wsId, oids.senderId, parseInt(options.push_sat, 10));
       } catch(err) {
         logger.error(err)
       }
@@ -119,7 +119,6 @@ const ChannelController = (() => {
       }
       options.remote_balance = "0";
 
-      console.log(options)
       //Create Channel(Sender)
       await ChannelServices.create(wsname, senderIPubkey, chan_id, options);
       //Create Channel(Receiver)
@@ -128,7 +127,8 @@ const ChannelController = (() => {
       return;
     },
     getAll: async () => {
-      return await ChannelServices.find(selfIPubkey);
+      let oid = _getTargetOId(selfIPubkey)
+      return await ChannelServices.find(oid);
     },
     get: async (workspaceName) => {
 
@@ -136,9 +136,9 @@ const ChannelController = (() => {
     confirmed: async () => {
 
     },
-    close: async (cp) => {
+    close: async (funding_txid_str, output_index) => {
       let oid = _getTargetOId(selfIPubkey)
-      await ChannelServices.close(oid, cp);
+      return await ChannelServices.close(wsId, oid, funding_txid_str, output_index);
     }
   }
 })()

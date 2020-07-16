@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import DateFormater from '../common/dateformater';
+import DateTImeFormater from '../common/datetimeformater';
 
 class ReqHistoryTr extends Component {
 
@@ -9,7 +9,7 @@ class ReqHistoryTr extends Component {
 
     return (
       <tr>
-        <th scope="Name">{DateFormater(reqhistory.timestamp)}</th>
+        <th scope="Name">{DateTImeFormater(reqhistory.timestamp)}</th>
         <td>{reqhistory.request}</td>
         <td>{reqhistory.sender}</td>
         <td>{reqhistory.receiver}</td>

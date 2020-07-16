@@ -1,4 +1,5 @@
 const ChannelCtr = require('../../controllers/channel')
+const LNnodeCtr = require('../../controllers/lnnode')
 const ReqHistoryCtr = require('../../controllers/reqhistory')
 const channelResSchemas = require('../../ResponceSchema/channels')
 const invoiceResSchemas = require('../../ResponceSchema/invoices');
@@ -6,9 +7,9 @@ const url = require('url');
 const logger = require('../../utils/logger');
 
 async function channels(req, res, data, server) {
-  let jsondata = JSON.parse(data);
   if (req.method === "POST") {
     try {
+      let jsondata = JSON.parse(data);
       let result = await ChannelCtr.addChannelFromSelf(jsondata)
       let body = JSON.stringify(channelResSchemas.addChannel(result), undefined, 4);
       res.writeHead(200, {"Content-Type": "application/json"});
@@ -28,10 +29,24 @@ async function channels(req, res, data, server) {
       res.writeHead(200, {"Content-Type": "application/json"});
       res.write(body);
       res.end();
-      // ReqHistoryCtr.new(req.method + " " + url.parse(req.url).pathname, "You", "", "HTTP")
     } catch(err) {
       logger.error(err)
-      awaitres.writeHead(500, {"Content-Type": "application/json"});
+      res.writeHead(500, {"Content-Type": "application/json"});
+      res.write(err);
+      res.end();
+    }
+  } else if(req.method === "DELETE") {
+    try {
+      console.log(url.parse(req.url))
+      let params = req.url.split("/")
+      let result = await ChannelCtr.close(params[3], params[4]);
+      let body = JSON.stringify(await channelResSchemas.closed(result), undefined, 4);
+      res.writeHead(200, {"Content-Type": "application/json"});
+      res.write(body);
+      res.end();
+    } catch(err) {
+      logger.error(err)
+      res.writeHead(500, {"Content-Type": "application/json"});
       res.write(err);
       res.end();
     }
@@ -43,17 +58,21 @@ async function channels(req, res, data, server) {
   server.data = ""
 }
 
-async function transactions() {
+async function transactions(req, res, data, server) {
+  let jsondata = JSON.parse(data);
   if (req.method === "POST") {
     try {
-      let result = await ChannelCtr.payment(req.options)
-      let body = JSON.stringify(invoiceResSchemas.payment(result), undefined, 4);
+      let result = await LNnodeCtr.payment(jsondata)
+      console.log(result)
+      let body = JSON.stringify(channelResSchemas.payment(result), undefined, 4);
       res.writeHead(200, {"Content-Type": "application/json"});
       res.write(body);
       res.end();
+      // ReqHistoryCtr.newChannel(req.method + " " + url.parse(req.url).pathname, "You", result, "HTTP")
     } catch(err) {
+      logger.error(err)
       res.writeHead(500, {"Content-Type": "application/json"});
-      res.write(body);
+      res.write(err);
       res.end();
     }
   } else {
@@ -61,6 +80,7 @@ async function transactions() {
     res.write(undefined);
     res.end();
   }
+  server.data = ""
 }
 
 function pending() {

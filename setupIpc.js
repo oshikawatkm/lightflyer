@@ -56,9 +56,6 @@ module.exports = function setupIpc() {
 
   ipcMain.on(getInvoices, async (event) => {
     let invoices = await InvoiceCtr.getAllInWs();
-    console.log(11111111111)
-    console.log(invoices)
-    console.log(11111111111)
     event.reply(getInvoicesResponse, invoices)
   })
 

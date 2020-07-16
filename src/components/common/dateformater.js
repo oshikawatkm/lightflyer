@@ -1,9 +1,9 @@
 
+
 const dateformater = date => {
   let month = date.getMonth()  
   let day = date.getDate()
-  let time = date.toLocaleTimeString()
-  let formatted = month+"/"+day+" "+time;
+  let formatted = month+"/"+day;
   return formatted;
 };
 export default dateformater;

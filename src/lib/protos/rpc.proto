@@ -1,0 +1,360 @@
+syntax = "proto3";
+
+package lnrpc;
+
+service Lightning {
+  rpc listChannels (listChannelsRequest) returns (listChannelsResponse) {};
+  rpc OpenChannel (OpenChannelRequest) returns (stream OpenStatusUpdate);
+  rpc ConnectPeer (ConnectPeerRequest) returns (ConnectPeerResponse) {};
+  rpc ListPeers (ListPeersRequest) returns (ListPeersResponse) {};
+  rpc AddInvoice (Invoice) returns (AddInvoiceResponse) {};
+  rpc ListInvoices (ListInvoiceRequest) returns (ListInvoiceResponse) {};
+  rpc SendPaymentSync (SendRequest) returns (SendResponse) {};
+  rpc CloseChannel (CloseChannelRequest) returns (stream CloseStatusUpdate) {};
+}
+
+message listChannelsRequest{
+  bool active_only = 1;
+  bool inactive_only = 2;
+  bool public_only = 3;
+  bool private_only = 4;
+  bytes peer = 5;
+}
+
+message listChannelsResponse {
+  Channel channel = 1;
+}
+
+message OpenChannelRequest {
+  bytes node_pubkey = 1;
+  string node_pubkey_string = 2;
+  int64 local_funding_amount = 3;
+  int64 push_sat = 4;
+  int32 target_conf = 5;
+  int64 sat_per_byte = 6;
+  bool private = 7;
+  int64 min_htlc_msat = 8;
+  uint32 remote_csv_delay = 9;
+  int32 min_conf = 10;
+  bool spend_unconfirmed = 11;
+  string close_address = 12;
+  FundingShim funding_shim = 13;
+}
+
+message OpenStatusUpdate {
+  oneof update {
+      PendingUpdate chan_pending = 1;
+      ChannelOpenUpdate chan_open = 3;
+      ReadyForPsbtFunding psbt_fund = 5;
+  }
+  bytes pending_chan_id = 4;
+}
+
+
+message PendingUpdate {
+  bytes txid = 1;
+  uint32 output_index = 2;
+}
+
+message ChannelOpenUpdate {
+  ChannelPoint channel_point = 1;
+}
+
+message ChannelPoint {
+  oneof funding_txid {
+      bytes funding_txid_bytes = 1;
+      string funding_txid_str = 2;
+  }
+  uint32 output_index = 3;
+}
+
+message ReadyForPsbtFunding {
+  string funding_address = 1;
+  int64 funding_amount = 2;
+  bytes psbt = 3;
+}
+
+message FundingShim {
+  
+}
+
+message Channel {
+  bool active = 1;
+  string remote_pubkey = 2;
+  string channel_pubkey = 3;
+  string channel_point = 4;
+  string chan_id = 5;
+  string capacity = 6;
+  string local_balance = 7;
+  string remote_balance = 8;
+  string commit_fee = 9;
+  string commit_weight = 10;
+  string fee_per_kw = 11;
+  string unsettled_balance = 12;
+  string total_satoshis_sent = 13;
+  string total_satoshis_received = 14;
+  string num_updates = 15;
+  Htlc pending_htlcs = 16;
+  uint32 csv_delay = 17;
+  bool private = 18;
+}
+
+message Htlc {
+  bool incoming = 1;
+  string amount = 2;
+  string hash_lock = 3;
+  uint32 expiration_height = 4;
+}
+  
+message ConnectPeerRequest {
+  LightningAddress addr = 1;
+  bool perm = 2;
+}
+
+message LightningAddress {
+  string pubkey = 1;
+  string host = 2;
+}
+
+message ConnectPeerResponse {
+}
+
+
+message ListPeersRequest {
+  bool latest_error = 1;
+}
+
+
+message ListPeersResponse {
+    repeated Peer peers = 1;
+}
+
+
+
+message Peer {
+  string pub_key = 1;
+  string address = 3;
+  uint64 bytes_sent = 4;
+  uint64 bytes_recv = 5;
+  int64 sat_sent = 6;
+  int64 sat_recv = 7;
+  bool inbound = 8;
+  int64 ping_time = 9;
+  enum SyncType {
+      UNKNOWN_SYNC = 0;
+      ACTIVE_SYNC = 1;
+      PASSIVE_SYNC = 2;
+  }
+  SyncType sync_type = 10;
+  map<uint32, Feature> features = 11;
+  repeated TimestampedError errors = 12;
+}
+
+message TimestampedError {
+  uint64 timestamp = 1;
+  string error = 2;
+}
+
+
+message Invoice {
+  string memo = 1;
+  reserved 2;
+  bytes r_preimage = 3;
+  bytes r_hash = 4;
+  int64 value = 5;
+  int64 value_msat = 23;
+  bool settled = 6 [deprecated = true];
+  int64 creation_date = 7;
+  int64 settle_date = 8;
+  string payment_request = 9;
+  bytes description_hash = 10;
+  int64 expiry = 11;
+  string fallback_addr = 12;
+  uint64 cltv_expiry = 13;
+  repeated RouteHint route_hints = 14;
+  bool private = 15;
+  uint64 add_index = 16;
+  uint64 settle_index = 17;
+  int64 amt_paid = 18 [deprecated = true];
+  int64 amt_paid_sat = 19;
+  int64 amt_paid_msat = 20;
+
+  enum InvoiceState {
+      OPEN = 0;
+      SETTLED = 1;
+      CANCELED = 2;
+      ACCEPTED = 3;
+  }
+  InvoiceState state = 21;
+  repeated InvoiceHTLC htlcs = 22;
+  map<uint32, Feature> features = 24;
+  bool is_keysend = 25;
+}
+
+message RouteHint {
+  repeated HopHint hop_hints = 1;
+}
+
+message HopHint {
+  string node_id = 1;
+  uint64 chan_id = 2 [jstype = JS_STRING];
+  uint32 fee_base_msat = 3;
+  uint32 fee_proportional_millionths = 4;
+  uint32 cltv_expiry_delta = 5;
+}
+
+
+message InvoiceHTLC {
+  uint64 chan_id = 1 [jstype = JS_STRING];
+  uint64 htlc_index = 2;
+  uint64 amt_msat = 3;
+  int32 accept_height = 4;
+  int64 accept_time = 5;
+  int64 resolve_time = 6;
+  int32 expiry_height = 7;
+  InvoiceHTLCState state = 8;
+  map<uint64, bytes> custom_records = 9;
+  uint64 mpp_total_amt_msat = 10;
+}
+
+enum InvoiceHTLCState {
+  ACCEPTED = 0;
+  SETTLED = 1;
+  CANCELED = 2;
+}
+
+message AddInvoiceResponse {
+  bytes r_hash = 1;
+  string payment_request = 2;
+  uint64 add_index = 16;
+}
+
+
+message ListInvoiceRequest {
+  bool pending_only = 1;
+  uint64 index_offset = 4;
+  uint64 num_max_invoices = 5;
+  bool reversed = 6;
+}
+
+
+message SendRequest {
+  bytes dest = 1;
+  string dest_string = 2 [deprecated = true];
+  int64 amt = 3;
+  int64 amt_msat = 12;
+  bytes payment_hash = 4;
+  string payment_hash_string = 5 [deprecated = true];
+  string payment_request = 6;
+  int32 final_cltv_delta = 7;
+  FeeLimit fee_limit = 8;
+  uint64 outgoing_chan_id = 9 [jstype = JS_STRING];
+  bytes last_hop_pubkey = 13;
+  uint32 cltv_limit = 10;
+  map<uint64, bytes> dest_custom_records = 11;
+  bool allow_self_payment = 14;
+  repeated FeatureBit dest_features = 15;
+}
+
+message SendResponse {
+  string payment_error = 1;
+  bytes payment_preimage = 2;
+  Route payment_route = 3;
+  bytes payment_hash = 4;
+}
+
+
+message FeeLimit {
+  oneof limit {
+      int64 fixed = 1;
+      int64 fixed_msat = 3;
+      int64 percent = 2;
+  }
+}
+
+
+enum FeatureBit {
+    DATALOSS_PROTECT_REQ = 0;
+    DATALOSS_PROTECT_OPT = 1;
+    INITIAL_ROUING_SYNC = 3;
+    UPFRONT_SHUTDOWN_SCRIPT_REQ = 4;
+    UPFRONT_SHUTDOWN_SCRIPT_OPT = 5;
+    GOSSIP_QUERIES_REQ = 6;
+    GOSSIP_QUERIES_OPT = 7;
+    TLV_ONION_REQ = 8;
+    TLV_ONION_OPT = 9;
+    EXT_GOSSIP_QUERIES_REQ = 10;
+    EXT_GOSSIP_QUERIES_OPT = 11;
+    STATIC_REMOTE_KEY_REQ = 12;
+    STATIC_REMOTE_KEY_OPT = 13;
+    PAYMENT_ADDR_REQ = 14;
+    PAYMENT_ADDR_OPT = 15;
+    MPP_REQ = 16;
+    MPP_OPT = 17;
+}
+
+
+message Route {
+  uint32 total_time_lock = 1;
+  int64 total_fees = 2 [deprecated = true];
+  int64 total_amt = 3 [deprecated = true];
+  repeated Hop hops = 4;
+  int64 total_fees_msat = 5;
+  int64 total_amt_msat = 6;
+}
+
+
+
+message Hop {
+  uint64 chan_id = 1 [jstype = JS_STRING];
+  int64 chan_capacity = 2;
+  int64 amt_to_forward = 3 [deprecated = true];
+  int64 fee = 4 [deprecated = true];
+  uint32 expiry = 5;
+  int64 amt_to_forward_msat = 6;
+  int64 fee_msat = 7;
+  string pub_key = 8;
+  bool tlv_payload = 9;
+  MPPRecord mpp_record = 10;
+  map<uint64, bytes> custom_records = 11;
+}
+
+message MPPRecord {
+  bytes payment_addr = 11;
+  int64 total_amt_msat = 10;
+}
+
+
+message ListInvoiceResponse {
+  repeated Invoice invoices = 1;
+  uint64 last_index_offset = 2;
+  uint64 first_index_offset = 3;
+}
+
+
+message CloseChannelRequest {
+  ChannelPoint channel_point = 1;
+  bool force = 2;
+  int32 target_conf = 3;
+  int64 sat_per_byte = 4;
+  string delivery_address = 5;
+}
+
+message CloseStatusUpdate {
+  oneof update {
+      PendingUpdate close_pending = 1;
+      ChannelCloseUpdate chan_close = 3;
+  }
+}
+
+
+message ChannelCloseUpdate {
+    bytes closing_txid = 1;
+    bool success = 2;
+}
+
+message Feature {
+  string name = 2;
+  bool is_required = 3;
+  bool is_known = 4;
+}

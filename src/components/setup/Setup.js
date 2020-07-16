@@ -9,7 +9,7 @@ const Setup = () => {
   const [formData, setFormData] = useState({
     workspaceName: 'default2',
     miningPace: 10,
-    fee: 1,
+    fee: 8000,
     nodeNumber: 5,
     satoshi: 100000000000,
     rpcport: 10001,
@@ -126,7 +126,7 @@ const Setup = () => {
                 id="fee"
                 className="form-control" 
                 type="text"
-                placeholder="1" 
+                placeholder="fee" 
                 name="fee"
                 value={fee}
                 onChange={onChange}

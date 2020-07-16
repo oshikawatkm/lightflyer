@@ -13,7 +13,7 @@ const useGetLNnodes = (status) => {
   useEffect(() => {
     setTimeout(()=>{
     ipcRenderer.send(getLNnodes, "ping")
-    }, 2000)
+    }, 3000)
     ipcRenderer.on(getLNnodesResponse, (e, lnnodes) => {
       let lnnodeArr = []
       for (let i=0; i <= Object.keys(lnnodes).length -1; i++) {

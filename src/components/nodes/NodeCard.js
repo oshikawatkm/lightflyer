@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import OperateModal from './OperateModal'
-import { Button, Modal } from 'react-bootstrap';
+import { Button, Modal, Form, Col, Row } from 'react-bootstrap';
 
 class NodeCard extends Component {
   constructor(props, context) {
@@ -11,20 +10,21 @@ class NodeCard extends Component {
 		this.handleClose = this.handleClose.bind(this);
 
 		this.state = {
-			show: false,
+      show: false,
 		};
 	}
 
 	handleClose() {
-		this.setState({ show: false });
+    this.setState({ show: false });
 	}
 
 	handleShow() {
-		this.setState({ show: true });
+    this.setState({ show: true });
   }
   
   render() {
     const { node } = this.props;
+    const { nodes } = this.props;
 
     return (
       <React.Fragment>
@@ -49,17 +49,45 @@ class NodeCard extends Component {
             </div>
         </div>
       </div>
-      <Modal show={this.state.show} onHide={this.handleClose}>
+      <Modal show={this.state.show} onHide={this.handleClose} >
 					<Modal.Header closeButton>
-						<Modal.Title>Modal heading</Modal.Title>
+						<Modal.Title>{node.name}</Modal.Title>
 					</Modal.Header>
-					<Modal.Body>Woohoo, you're reading this text in a modal!</Modal.Body>
+					<Modal.Body>
+            <div className="p">address: {node.address}</div>
+            <div className="p">iditity_pubkey: {node.iditity_pubkey}</div>
+            <div className="p">balance: {node.balance}</div>
+            <div className="p">balance: {node.balance}</div>
+            <div className="p">balance: {node.balance}</div>
+            <Form>
+              <Form.Row className="align-items-center">
+                <Col sm={7} className="my-1">
+                  <Form.Label className="mr-sm-5" htmlFor="inlineFormCustomSelect" srOnly>
+                    Node
+                  </Form.Label>
+                  <Form.Control
+                    as="select"
+                    className="mr-sm-2"
+                    id="inlineFormCustomSelect"
+                    custom
+                  >
+                    <option value="0">Choose...</option>
+                    <option value="1">{nodes[1].name}</option>
+                    <option value="2">{nodes[2].name}</option>
+                    <option value="3">{nodes[3].name}</option>
+                    <option value="4">{nodes[4].name}</option>
+                  </Form.Control>
+                </Col>
+                <Col xs="auto" className="my-1">
+                  <Button type="submit">Submit</Button>
+                </Col>
+              </Form.Row>
+            </Form>
+          </Modal.Body>
 					<Modal.Footer>
+            <div className="h5">balance: {node.balance}</div>
 						<Button variant="secondary" onClick={this.handleClose}>
 							Close
-            </Button>
-						<Button variant="primary" onClick={this.handleClose}>
-							Save Changes
             </Button>
 					</Modal.Footer>
 				</Modal>

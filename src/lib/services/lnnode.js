@@ -32,7 +32,7 @@ const LNnodeServices = (() => {
   }
 
   return {
-    create: async (oid, config) => {
+    create: async (oid, config, count) => {
       let keyPair = bitcoinjs.ECPair.makeRandom();
       let privateKey = keyPair.toWIF();
       let publicKey = keyPair.publicKey.toString('hex');
@@ -43,7 +43,7 @@ const LNnodeServices = (() => {
         publicKey: publicKey,
         privateKey: privateKey,
         iditity_pubkey: publicKey,
-        address: config.address,
+        address: "192.168.0." + (1 + count).toString(),
       })
         .save()
         .catch(err => logger.error(err))
@@ -63,18 +63,23 @@ const LNnodeServices = (() => {
         .then(res => {
           return res
         })
-        console.log(ln)
       return ln;
     },
-    funding:async (oid, push_sat) => {
+    funding:async (wsId, oid, push_sat) => {
       // 開設時のlocal_amt分nodeからbalanceをマイナス
+      let ws = await Workspace.findById(wsId)
+      .then((res, err) => {
+        return res
+      })
+      let amount = ws.blockchain_config.fee + push_sat;
+      console.log(amount, ws.blockchain_config.fee, push_sat)
       await LNnode.findByIdAndUpdate(
         oid,
-        {  $inc: { balance: -push_sat } }
+        {  $inc: { balance: -amount } }
       )
       .then((res, err) => {
-        if (err) console.log(err);
-        console.log(res);
+        if (err) logger.error(err);
+        logger.info(res);
       })
 
       return;
@@ -135,10 +140,13 @@ const LNnodeServices = (() => {
               }
             },
           )
+        return {
+          invoice: invoice, 
+          lnnode: lnnode, 
+          channel: channel};
         } catch(err) {
           return new Error("Hoge")
         }
-      return;
     },
     paymentByOthers:(senderPubkey, receiverPubkey) => {
 

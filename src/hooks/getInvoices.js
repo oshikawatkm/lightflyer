@@ -11,16 +11,15 @@ const useGetInvoices = (status) => {
   const [invoices, setInvoice] = useState([]);
 
   useEffect(() => {
-    setTimeout(()=>{
+    setInterval(()=>{
       ipcRenderer.send(getInvoices, "ping")
-    }, 2000)
+    }, 3000)
     ipcRenderer.on(getInvoicesResponse, (e, response) => {
       let invoiceArr = []
-      console.log(response)
       for (let i=0; i <= Object.keys(response).length -1; i++) {
         invoiceArr.push(response[i]._doc)
       }
-      
+  
       setInvoice(invoiceArr);
     })
   },[status])

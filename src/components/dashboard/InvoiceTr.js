@@ -12,6 +12,8 @@ class InvoiceTr extends Component {
         <th scope="Name">{invoice.lnnode._doc.name}</th>
         <td>{invoice.value}</td>
         <td>{DateFormater(invoice.timestamp)}</td>
+        <td>{invoice.settled.toString()}</td>
+        <td>{invoice.payment_request}</td>
       </tr>
     )
   }

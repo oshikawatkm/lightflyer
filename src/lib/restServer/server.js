@@ -39,8 +39,9 @@ class RestServer {
   _router(handle, pathname, req, res, data) {
     if ( typeof handle[pathname] === 'function' ) {
        handle[pathname] (req, res, data, this)
+    } else if ( req.method === 'DELETE' ) {
+       handle["/v1/channels"] (req, res, data, this)
     } else {
-      console.log("fuck")
       logger.error("No request handler found for " + pathname)
       res.writeHead(404, {"Content-Type": "text/html"});
       res.write("404 Not found");
